@@ -26,6 +26,26 @@ public class EvidenceRecord {
     @Column(nullable = false)
     private LocalDateTime submittedAt;
 
+   
+    public EvidenceRecord() {
+    }
+
+  
+    public EvidenceRecord(
+            IntegrityCase integrityCase,
+            String evidenceType,
+            String content,
+            String submittedBy,
+            LocalDateTime submittedAt) {
+
+        this.integrityCase = integrityCase;
+        this.evidenceType = evidenceType;
+        this.content = content;
+        this.submittedBy = submittedBy;
+        this.submittedAt = submittedAt;
+    }
+
+    
     @PrePersist
     public void prePersist() {
         if (submittedAt == null) {
@@ -33,10 +53,14 @@ public class EvidenceRecord {
         }
     }
 
-    
+  
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {       // optional but useful
+        this.id = id;
     }
 
     public IntegrityCase getIntegrityCase() {
@@ -73,5 +97,9 @@ public class EvidenceRecord {
 
     public LocalDateTime getSubmittedAt() {
         return submittedAt;
+    }
+
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
     }
 }
