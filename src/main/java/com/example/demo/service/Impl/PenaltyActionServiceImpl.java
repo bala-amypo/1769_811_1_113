@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.PenaltyAction;
@@ -10,14 +10,25 @@ import com.example.demo.service.PenaltyActionService;
 @Service
 public class PenaltyActionServiceImpl implements PenaltyActionService {
 
-    @Autowired
-    private PenaltyActionRepository penaltyActionRepository;
+    private final PenaltyActionRepository repo;
 
-    @Override
-    public PenaltyAction addPenalty(PenaltyAction penaltyAction) {
-        if (penaltyAction.getIntegrityCase() == null) {
-            throw new IllegalArgumentException("IntegrityCase cannot be null");
-        }
-        return penaltyActionRepository.save(penaltyAction);
+    public PenaltyActionServiceImpl(PenaltyActionRepository repo) {
+        this.repo = repo;
+    }
+
+    public PenaltyAction addPenalty(PenaltyAction p) {
+        return repo.save(p);
+    }
+
+    public List<PenaltyAction> getPenaltiesByCase(Long caseId) {
+        return repo.findByIntegrityCase_Id(caseId);
+    }
+
+    public PenaltyAction getPenaltyById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public List<PenaltyAction> getAllPenalties() {
+        return repo.findAll();
     }
 }
