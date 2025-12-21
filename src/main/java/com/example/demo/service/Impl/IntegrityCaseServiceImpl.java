@@ -7,24 +7,41 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 
 import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.StudentProfile;
 import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.IntegrityCaseService;
 
 @Service
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
 
     private final IntegrityCaseRepository repo;
+    private final StudentProfileRepository studentRepo;
 
-    public IntegrityCaseServiceImpl(IntegrityCaseRepository repo) {
+    public IntegrityCaseServiceImpl(
+            IntegrityCaseRepository repo,
+            StudentProfileRepository studentRepo) {
         this.repo = repo;
+        this.studentRepo = studentRepo;
     }
 
     @Override
     public IntegrityCase createCase(IntegrityCase c) {
 
-        if (c.getStudentProfile() == null) {
-            throw new IllegalArgumentException("StudentProfile must be provided");
+        if (c.getStudentProfile() == null ||
+            c.getStudentProfile().getId() == null) {
+            throw new IllegalArgumentException("StudentProfile id must be provided");
         }
+
+        Long studentId = c.getStudentProfile().getId();
+
+        StudentProfile student = studentRepo.findById(studentId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "StudentProfile not found with id " + studentId));
+
+        // 🔑 IMPORTANT: reattach managed entity
+        c.setStudentProfile(student);
 
         return repo.save(c);
     }
@@ -56,23 +73,4 @@ public class IntegrityCaseServiceImpl implements IntegrityCaseService {
     public List<IntegrityCase> getAllCases() {
         return repo.findAll();
     }
-    @Override
-public IntegrityCase createCase(IntegrityCase c) {
-
-    if (c.getStudentProfile() == null ||
-        c.getStudentProfile().getId() == null) {
-        throw new IllegalArgumentException("StudentProfile id must be provided");
-    }
-
-    Long studentId = c.getStudentProfile().getId();
-
-    StudentProfile student = studentRepo.findById(studentId)
-            .orElseThrow(() ->
-                    new EntityNotFoundException(
-                        "StudentProfile not found with id " + studentId));
-
-    c.setStudentProfile(student); // ✅ reattach managed entity
-    return repo.save(c);
-}
-
 }
