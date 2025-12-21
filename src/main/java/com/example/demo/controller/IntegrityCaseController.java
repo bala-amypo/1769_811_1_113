@@ -41,4 +41,5 @@ public class IntegrityCaseController {
     public List<IntegrityCase> all() {
         return service.getAllCases();
     }
+    
 }
