@@ -20,13 +20,11 @@ public class RepeatOffenderRecordController {
     }
 
     @PostMapping("/refresh/{studentId}")
-    public ResponseEntity<?> refresh(
+    public ResponseEntity<RepeatOffenderRecord> refresh(
             @PathVariable String studentId) {
 
-        RepeatOffenderRecord record =
-                service.refreshRepeatOffenderData(studentId);
-
-        return ResponseEntity.ok(record);
+        return ResponseEntity.ok(
+                service.refreshRepeatOffenderData(studentId));
     }
 
     @GetMapping
@@ -37,6 +35,7 @@ public class RepeatOffenderRecordController {
     @GetMapping("/student/{studentId}")
     public RepeatOffenderRecord byStudent(
             @PathVariable String studentId) {
+
         return service.getRecordByStudent(studentId);
     }
 }
