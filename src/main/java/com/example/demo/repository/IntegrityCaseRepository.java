@@ -9,4 +9,3 @@ extends JpaRepository<IntegrityCase, Long> {
 
 List<IntegrityCase> findByStudentProfile_Id(Long studentId);
 }
-`
