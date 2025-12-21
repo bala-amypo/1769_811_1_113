@@ -5,11 +5,11 @@ import com.example.demo.entity.IntegrityCase;
 
 public interface IntegrityCaseService {
 
-IntegrityCase createCase(IntegrityCase integrityCase);
+    IntegrityCase createCase(IntegrityCase integrityCase);
 
-IntegrityCase getCaseById(Long id);
+    IntegrityCase getCaseById(Long id);
 
-List<IntegrityCase> getCasesByStudent(Long studentId);
+    List<IntegrityCase> getAllCases();
 
-IntegrityCase updateStatus(Long id, String status);
+    IntegrityCase updateCaseStatus(Long id, String status);
 }
