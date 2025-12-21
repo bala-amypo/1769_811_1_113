@@ -56,4 +56,23 @@ public class IntegrityCaseServiceImpl implements IntegrityCaseService {
     public List<IntegrityCase> getAllCases() {
         return repo.findAll();
     }
+    @Override
+public IntegrityCase createCase(IntegrityCase c) {
+
+    if (c.getStudentProfile() == null ||
+        c.getStudentProfile().getId() == null) {
+        throw new IllegalArgumentException("StudentProfile id must be provided");
+    }
+
+    Long studentId = c.getStudentProfile().getId();
+
+    StudentProfile student = studentRepo.findById(studentId)
+            .orElseThrow(() ->
+                    new EntityNotFoundException(
+                        "StudentProfile not found with id " + studentId));
+
+    c.setStudentProfile(student); // ✅ reattach managed entity
+    return repo.save(c);
+}
+
 }
