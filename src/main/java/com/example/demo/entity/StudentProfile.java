@@ -1,141 +1,99 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "student_profiles")
 public class StudentProfile {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-private String studentId;
-private String name;
-private String email;
-private String program;
+    @Column(nullable = false, unique = true)
+    private String studentId;
 
-@Column(nullable = false)
-private Integer yearLevel;
+    @Column(nullable = false)
+    private String name;
 
-private Boolean repeatOffender = false;
-private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private String email;
 
-public StudentProfile() {
-this.createdAt = LocalDateTime.now();
+    private String program;
+
+    @Column(name = "year_level", nullable = false)
+    private Integer yearLevel;
+
+    @Column(nullable = false)
+    private boolean repeatOffender = false;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    // JPA requires a no-arg constructor
+    public StudentProfile() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // -------- getters & setters --------
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getProgram() {
+        return program;
+    }
+
+    public void setProgram(String program) {
+        this.program = program;
+    }
+
+    public Integer getYearLevel() {
+        return yearLevel;
+    }
+
+    public void setYearLevel(Integer yearLevel) {
+        this.yearLevel = yearLevel;
+    }
+
+    public boolean isRepeatOffender() {
+        return repeatOffender;
+    }
+
+    public void setRepeatOffender(boolean repeatOffender) {
+        this.repeatOffender = repeatOffender;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
-
-public Long getId() { return id; }
-public Boolean getRepeatOffender() { return repeatOffender; }
-public void setRepeatOffender(Boolean repeatOffender) {
-this.repeatOffender = repeatOffender;
-}
-}
-
-
-
-
-
-
-
-
-/*package com.example.demo.entity;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-
-@Entity
-public class StudentProfile {
- @Id
- @GeneratedValue(strategy=GenerationType.IDENTITY)
-
- private Long id;
- @Column(unique=true)
- private String studentid;
- @Column(unique = true)
- @Email
- @NotBlank
- private String email;
- private String Program;
- private int yearlevel;
- @ManyToMany
- private List<IntegrityCase>IntegrityCases;
- private boolean isRepeatOffender;
- private LocalDateTime createdAt;
- public Long getId() {
-    return id;
- }
- 
- public StudentProfile(Long id, String studentid, String email, String program, int yearlevel,
-        List<IntegrityCase> integrityCases, boolean isRepeatOffender, LocalDateTime createdAt) {
-    this.id = id;
-    this.studentid = studentid;
-    this.email = email;
-    Program = program;
-    this.yearlevel = yearlevel;
-    IntegrityCases = integrityCases;
-    this.isRepeatOffender = isRepeatOffender;
-    this.createdAt = createdAt;
-}
-
-
- public StudentProfile() {
-}
-
- public void setId(Long id) {
-    this.id = id;
- }
- public String getStudentid() {
-    return studentid;
- }
- public void setStudentid(String studentid) {
-    this.studentid = studentid;
- }
- public String getEmail() {
-    return email;
- }
- public void setEmail(String email) {
-    this.email = email;
- }
- public String getProgram() {
-    return Program;
- }
- public void setProgram(String program) {
-    Program = program;
- }
- public int getYearlevel() {
-    return yearlevel;
- }
- public void setYearlevel(int yearlevel) {
-    this.yearlevel = yearlevel;
- }
- public boolean isRepeatOffender() {
-    return isRepeatOffender;
- }
- public void setRepeatOffender(boolean isRepeatOffender) {
-    this.isRepeatOffender = isRepeatOffender;
- }
- public LocalDateTime getCreatedAt() {
-    return createdAt;
- }
- public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
- }
- public List<IntegrityCase> getIntegrityCases() {
-    return IntegrityCases;
- }
- public void setIntegrityCases(List<IntegrityCase> integrityCases) {
-    IntegrityCases = integrityCases;
- }
- 
-}*/
