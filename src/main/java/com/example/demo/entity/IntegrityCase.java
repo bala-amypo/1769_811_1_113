@@ -1,31 +1,44 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@Table(name = "integrity_cases")
 public class IntegrityCase {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@ManyToOne
-@JoinColumn(name = "student_id", nullable = false)
-private StudentProfile studentProfile;
+    private String caseName;
 
-private String courseCode;
-private String instructorName;
-private String description;
-private String status = "OPEN";
-private LocalDate incidentDate;
-private LocalDateTime createdAt = LocalDateTime.now();
+    @ManyToOne
+    private StudentProfile studentProfile;
 
-public IntegrityCase() {}
+    public Long getId() {
+        return id;
+    }
 
-public Long getId() { return id; }
-public String getStatus() { return status; }
-public void setStatus(String status) { this.status = status; }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCaseName() {
+        return caseName;
+    }
+
+    public void setCaseName(String caseName) {
+        this.caseName = caseName;
+    }
+
+    public StudentProfile getStudentProfile() {
+        return studentProfile;
+    }
+
+    public void setStudentProfile(StudentProfile studentProfile) {
+        this.studentProfile = studentProfile;
+    }
 }
