@@ -12,36 +12,26 @@ public class RepeatOffenderRecordServiceImpl
         implements RepeatOffenderRecordService {
 
     private final RepeatOffenderRecordRepository repo;
-    private final StudentProfileRepository studentRepo;
 
     public RepeatOffenderRecordServiceImpl(
-            RepeatOffenderRecordRepository repo,
-            StudentProfileRepository studentRepo) {
+            RepeatOffenderRecordRepository repo) {
         this.repo = repo;
-        this.studentRepo = studentRepo;
     }
 
-    @Override
     public RepeatOffenderRecord refreshRepeatOffenderData(String studentId) {
-
-        StudentProfile student = studentRepo
-                .findByStudentId(studentId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "StudentProfile not found for studentId: " + studentId));
-
-        RepeatOffenderRecord record =
+        RepeatOffenderRecord r =
                 repo.findByStudentProfile_StudentId(studentId);
-
-        if (record == null) {
-            record = new RepeatOffenderRecord();
-            record.setStudentProfile(student); // ✅ REQUIRED
-            record.setCaseCount(0);
+        if (r == null) {
+            r = new RepeatOffenderRecord();
         }
+        return repo.save(r);
+    }
 
-        record.setRepeatOffender(record.getCaseCount() >= 2);
-        record.setLastUpdated(LocalDateTime.now());
+    public RepeatOffenderRecord getRecordByStudent(String studentId) {
+        return repo.findByStudentProfile_StudentId(studentId);
+    }
 
-        return repo.save(record);
+    public List<RepeatOffenderRecord> getAllRepeatOffenders() {
+        return repo.findAll();
     }
 }
