@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.EvidenceRecord;
@@ -10,14 +10,25 @@ import com.example.demo.service.EvidenceRecordService;
 @Service
 public class EvidenceRecordServiceImpl implements EvidenceRecordService {
 
-    @Autowired
-    private EvidenceRecordRepository evidenceRecordRepository;
+    private final EvidenceRecordRepository repo;
 
-    @Override
-    public EvidenceRecord addEvidence(EvidenceRecord evidenceRecord) {
-        if (evidenceRecord.getIntegrityCase() == null) {
-            throw new IllegalArgumentException("IntegrityCase cannot be null");
-        }
-        return evidenceRecordRepository.save(evidenceRecord);
+    public EvidenceRecordServiceImpl(EvidenceRecordRepository repo) {
+        this.repo = repo;
+    }
+
+    public EvidenceRecord submitEvidence(EvidenceRecord e) {
+        return repo.save(e);
+    }
+
+    public List<EvidenceRecord> getEvidenceByCase(Long caseId) {
+        return repo.findByIntegrityCase_Id(caseId);
+    }
+
+    public EvidenceRecord getEvidenceById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public List<EvidenceRecord> getAllEvidence() {
+        return repo.findAll();
     }
 }
