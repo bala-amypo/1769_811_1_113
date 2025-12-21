@@ -36,7 +36,7 @@ public class PenaltyAction {
         }
     }
 
-    // getters and setters
+   
 
     public Long getId() {
         return id;

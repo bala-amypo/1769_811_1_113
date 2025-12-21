@@ -11,18 +11,18 @@ public class RepeatOffenderRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // One record per student
+   
     @OneToOne(optional = false)
     @JoinColumn(name = "student_profile_id", nullable = false, unique = true)
     private StudentProfile studentProfile;
 
-    // Number of integrity cases for the student
+   
     private int caseCount;
 
-    // Whether the student is officially marked as repeat offender
+   
     private boolean repeatOffender;
 
-    // Last time this record was recalculated
+   
     private LocalDateTime lastUpdated;
 
     @PrePersist
@@ -31,7 +31,7 @@ public class RepeatOffenderRecord {
         lastUpdated = LocalDateTime.now();
     }
 
-    // -------- getters & setters --------
+    
 
     public Long getId() {
         return id;

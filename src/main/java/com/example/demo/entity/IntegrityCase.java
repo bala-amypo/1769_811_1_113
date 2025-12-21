@@ -47,7 +47,7 @@ public class IntegrityCase {
         }
     }
 
-    // getters and setters
+   
 
     public Long getId() {
         return id;
