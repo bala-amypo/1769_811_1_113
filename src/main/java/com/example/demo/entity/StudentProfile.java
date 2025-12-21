@@ -1,5 +1,47 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "student_profiles")
+public class StudentProfile {
+
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+private String studentId;
+private String name;
+private String email;
+private String program;
+
+@Column(nullable = false)
+private Integer yearLevel;
+
+private Boolean repeatOffender = false;
+private LocalDateTime createdAt;
+
+public StudentProfile() {
+this.createdAt = LocalDateTime.now();
+}
+
+public Long getId() { return id; }
+public Boolean getRepeatOffender() { return repeatOffender; }
+public void setRepeatOffender(Boolean repeatOffender) {
+this.repeatOffender = repeatOffender;
+}
+}
+
+
+
+
+
+
+
+
+/*package com.example.demo.entity;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -96,4 +138,4 @@ public class StudentProfile {
     IntegrityCases = integrityCases;
  }
  
-}
+}*/
