@@ -1,8 +1,6 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.IntegrityCase;
@@ -12,34 +10,34 @@ import com.example.demo.service.IntegrityCaseService;
 @Service
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
 
-    @Autowired
-    private IntegrityCaseRepository integrityCaseRepository;
+    private final IntegrityCaseRepository repo;
 
-    @Override
-    public IntegrityCase createCase(IntegrityCase integrityCase) {
-        if (integrityCase.getStudentProfile() == null) {
-            throw new IllegalArgumentException("StudentProfile cannot be null");
-        }
-        return integrityCaseRepository.save(integrityCase);
+    public IntegrityCaseServiceImpl(IntegrityCaseRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public IntegrityCase getCaseById(Long id) {
-        return integrityCaseRepository.findById(id).orElse(null);
+    public IntegrityCase createCase(IntegrityCase c) {
+        return repo.save(c);
     }
 
-    @Override
-    public List<IntegrityCase> getAllCases() {
-        return integrityCaseRepository.findAll();
-    }
-
-    @Override
     public IntegrityCase updateCaseStatus(Long id, String status) {
-        IntegrityCase integrityCase = integrityCaseRepository.findById(id).orElse(null);
-        if (integrityCase != null) {
-            integrityCase.setStatus(status);
-            return integrityCaseRepository.save(integrityCase);
+        IntegrityCase c = repo.findById(id).orElse(null);
+        if (c != null) {
+            c.setStatus(status);
+            return repo.save(c);
         }
         return null;
+    }
+
+    public List<IntegrityCase> getCasesByStudent(String studentId) {
+        return repo.findByStudentProfile_StudentId(studentId);
+    }
+
+    public IntegrityCase getCaseById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public List<IntegrityCase> getAllCases() {
+        return repo.findAll();
     }
 }

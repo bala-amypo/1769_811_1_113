@@ -1,39 +1,44 @@
 package com.example.demo.controller;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.service.IntegrityCaseService;
 
 @RestController
-@RequestMapping("/api/integrity-cases")
+@RequestMapping("/api/cases")
 public class IntegrityCaseController {
 
-    @Autowired
-    private IntegrityCaseService integrityCaseService;
+    private final IntegrityCaseService service;
+
+    public IntegrityCaseController(IntegrityCaseService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public IntegrityCase createCase(@RequestBody IntegrityCase integrityCase) {
-        return integrityCaseService.createCase(integrityCase);
-    }
-
-    @GetMapping("/{id}")
-    public IntegrityCase getCaseById(@PathVariable Long id) {
-        return integrityCaseService.getCaseById(id);
-    }
-
-    @GetMapping
-    public List<IntegrityCase> getAllCases() {
-        return integrityCaseService.getAllCases();
+    public IntegrityCase create(@RequestBody IntegrityCase c) {
+        return service.createCase(c);
     }
 
     @PutMapping("/{id}/status")
-    public IntegrityCase updateCaseStatus(
-            @PathVariable Long id,
-            @RequestParam String status) {
-        return integrityCaseService.updateCaseStatus(id, status);
+    public IntegrityCase update(@PathVariable Long id,
+                                @RequestParam String status) {
+        return service.updateCaseStatus(id, status);
+    }
+
+    @GetMapping("/student/{studentId}")
+    public List<IntegrityCase> byStudent(@PathVariable String studentId) {
+        return service.getCasesByStudent(studentId);
+    }
+
+    @GetMapping("/{id}")
+    public IntegrityCase get(@PathVariable Long id) {
+        return service.getCaseById(id);
+    }
+
+    @GetMapping
+    public List<IntegrityCase> all() {
+        return service.getAllCases();
     }
 }
