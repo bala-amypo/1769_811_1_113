@@ -1,17 +1,10 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
-import com.example.demo.entity.StudentProfile;
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.entity.RepeatOffenderRecord;
-import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.RepeatOffenderRecordService;
-import com.example.demo.exception.ResourceNotFoundException;
 
 @Service
 public class RepeatOffenderRecordServiceImpl
@@ -32,59 +25,49 @@ this.recordRepo = recordRepo;
 }
 
 @Override
-public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
+public RepeatOffenderRecord refreshRepeatOffender(StudentProfile studentProfile) {
 
-StudentProfile student = studentRepo.findById(studentId)
-.orElseThrow(() ->
-new ResourceNotFoundException("Student not found"));
+if(studentProfile == null)
+throw new IllegalArgumentException("student constraint violated");
 
 List<IntegrityCase> cases =
-caseRepo.findByStudentProfile_Id(studentId);
+caseRepo.findByStudentProfile(studentProfile);
 
 int totalCases = cases.size();
-
-if (totalCases < 2) {
-student.setRepeatOffender(false);
-studentRepo.save(student);
-throw new IllegalStateException("Repeat offender requires at least 2 cases");
-}
-
 String severity;
-if (totalCases == 2) severity = "LOW";
-else if (totalCases == 3) severity = "MEDIUM";
-else severity = "HIGH";
 
-IntegrityCase lastCase = cases.get(cases.size() - 1);
+if(totalCases == 1) severity = "LOW";
+else if(totalCases == 2) severity = "MEDIUM";
+else if(totalCases >= 4) severity = "HIGH";
+else severity = "LOW";
 
 RepeatOffenderRecord record =
-recordRepo.findByStudentProfile(student)
+recordRepo.findByStudentProfile(studentProfile)
 .orElse(new RepeatOffenderRecord());
 
-record.setStudentProfile(student);
+record.setStudentProfile(studentProfile);
 record.setTotalCases(totalCases);
-record.setLastIncidentDate(lastCase.getIncidentDate());
 record.setFlagSeverity(severity);
 
-student.setRepeatOffender(true);
-studentRepo.save(student);
+if(!cases.isEmpty())
+record.setFirstIncidentDate(cases.get(0).getIncidentDate());
+
+studentProfile.setRepeatOffender(totalCases >= 2);
+studentRepo.save(studentProfile);
 
 return recordRepo.save(record);
 }
 
 @Override
-public RepeatOffenderRecord getRecordByStudent(Long studentId) {
+public RepeatOffenderRecord getByStudentProfile(StudentProfile studentProfile) {
 
-StudentProfile student = studentRepo.findById(studentId)
+return recordRepo.findByStudentProfile(studentProfile)
 .orElseThrow(() ->
-new ResourceNotFoundException("Student not found"));
-
-return recordRepo.findByStudentProfile(student)
-.orElseThrow(() ->
-new ResourceNotFoundException("Repeat offender record not found"));
+new IllegalArgumentException("status record not found"));
 }
 
 @Override
-public List<RepeatOffenderRecord> getAllRepeatOffenders() {
+public List<RepeatOffenderRecord> getAll() {
 return recordRepo.findAll();
 }
 }
