@@ -8,50 +8,36 @@ import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 
 @Service
-public class StudentProfileServiceImpl
-implements StudentProfileService {
+public class StudentProfileServiceImpl implements StudentProfileService {
 
-private final StudentProfileRepository repo;
+    private final StudentProfileRepository repo;
 
-public StudentProfileServiceImpl(StudentProfileRepository repo) {
-this.repo = repo;
-}
+    public StudentProfileServiceImpl(StudentProfileRepository repo) {
+        this.repo = repo;
+    }
 
-@Override
-public StudentProfile createStudent(StudentProfile studentProfile) {
-return repo.save(studentProfile);
-}
+    public StudentProfile createStudent(StudentProfile s) {
+        return repo.save(s);
+    }
 
-@Override
-public StudentProfile getStudentById(Long id) {
-return repo.findById(id)
-.orElseThrow(() ->
-new IllegalArgumentException("student not found"));
-}
+    public StudentProfile getStudentById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
 
-@Override
-public List<StudentProfile> getAllStudents() {
-return repo.findAll();
-}
+    public List<StudentProfile> getAllStudents() {
+        return repo.findAll();
+    }
 
-@Override
-public StudentProfile updateRepeatOffenderStatus(String studentId) {
+    public StudentProfile updateRepeatOffenderStatus(String studentId) {
+        StudentProfile s = repo.findByStudentId(studentId);
+        if (s != null) {
+            s.setRepeatOffender(true);
+            return repo.save(s);
+        }
+        return null;
+    }
 
-StudentProfile student =
-repo.findByStudentId(studentId)
-.orElseThrow(() ->
-new IllegalArgumentException("student not found"));
-
-student.setRepeatOffender(true);
-
-return repo.save(student);
-}
-
-@Override
-public StudentProfile getByStudentIdentifier(String studentId) {
-
-return repo.findByStudentId(studentId)
-.orElseThrow(() ->
-new IllegalArgumentException("student not found"));
-}
+    public StudentProfile getByStudentIdentifier(String studentId) {
+        return repo.findByStudentId(studentId);
+    }
 }
