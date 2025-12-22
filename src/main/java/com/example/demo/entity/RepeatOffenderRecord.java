@@ -1,40 +1,67 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "repeat_offender_records")
 public class RepeatOffenderRecord {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@ManyToOne(optional = false)
-@JoinColumn(name = "student_profile_id")
-private StudentProfile studentProfile;
+   
+    @OneToOne(optional = false)
+    @JoinColumn(name = "student_profile_id", nullable = false, unique = true)
+    private StudentProfile studentProfile;
 
-@Column(nullable = false)
-private Integer totalCases;
+   
+    private int caseCount;
 
-private LocalDate firstIncidentDate;
+   
+    private boolean repeatOffender;
 
-@Column(nullable = false)
-private String flagSeverity;
+   
+    private LocalDateTime lastUpdated;
 
-public RepeatOffenderRecord() {}
+    @PrePersist
+    @PreUpdate
+    private void onUpdate() {
+        lastUpdated = LocalDateTime.now();
+    }
 
-public RepeatOffenderRecord(StudentProfile studentProfile,
-Integer totalCases, LocalDate firstIncidentDate, String flagSeverity) {
-this.studentProfile = studentProfile;
-this.totalCases = totalCases;
-this.firstIncidentDate = firstIncidentDate;
-this.flagSeverity = flagSeverity;
-}
+    
 
-public Long getId() { return id; }
-public StudentProfile getStudentProfile() { return studentProfile; }
-public Integer getTotalCases() { return totalCases; }
-public String getFlagSeverity() { return flagSeverity; }
+    public Long getId() {
+        return id;
+    }
+
+    public StudentProfile getStudentProfile() {
+        return studentProfile;
+    }
+
+    public void setStudentProfile(StudentProfile studentProfile) {
+        this.studentProfile = studentProfile;
+    }
+
+    public int getCaseCount() {
+        return caseCount;
+    }
+
+    public void setCaseCount(int caseCount) {
+        this.caseCount = caseCount;
+    }
+
+    public boolean isRepeatOffender() {
+        return repeatOffender;
+    }
+
+    public void setRepeatOffender(boolean repeatOffender) {
+        this.repeatOffender = repeatOffender;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
 }
