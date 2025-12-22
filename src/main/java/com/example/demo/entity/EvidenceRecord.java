@@ -59,7 +59,7 @@ public class EvidenceRecord {
         return id;
     }
 
-    public void setId(Long id) {       // optional but useful
+    public void setId(Long id) {       
         this.id = id;
     }
 
