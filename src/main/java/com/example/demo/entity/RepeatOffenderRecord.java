@@ -1,67 +1,61 @@
 package com.example.demo.entity;
 
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "repeat_offender_records")
 public class RepeatOffenderRecord {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
 
-   
-    @OneToOne(optional = false)
-    @JoinColumn(name = "student_profile_id", nullable = false, unique = true)
-    private StudentProfile studentProfile;
+@ManyToOne(optional = false)
+@JoinColumn(name = "student_profile_id", nullable = false)
+private StudentProfile studentProfile;
 
-   
-    private int caseCount;
+@Column(nullable = false)
+private Integer totalCases;
 
-   
-    private boolean repeatOffender;
+private LocalDate lastIncidentDate;
 
-   
-    private LocalDateTime lastUpdated;
+@Column(nullable = false)
+private String flagSeverity;
 
-    @PrePersist
-    @PreUpdate
-    private void onUpdate() {
-        lastUpdated = LocalDateTime.now();
-    }
+public RepeatOffenderRecord() {}
 
-    
+public RepeatOffenderRecord(StudentProfile studentProfile,
+Integer totalCases,
+LocalDate lastIncidentDate,
+String flagSeverity) {
 
-    public Long getId() {
-        return id;
-    }
+this.studentProfile = studentProfile;
+this.totalCases = totalCases;
+this.lastIncidentDate = lastIncidentDate;
+this.flagSeverity = flagSeverity;
+}
 
-    public StudentProfile getStudentProfile() {
-        return studentProfile;
-    }
+public Long getId() { return id; }
+public void setId(Long id) { this.id = id; }
 
-    public void setStudentProfile(StudentProfile studentProfile) {
-        this.studentProfile = studentProfile;
-    }
+public StudentProfile getStudentProfile() { return studentProfile; }
+public void setStudentProfile(StudentProfile studentProfile) {
+this.studentProfile = studentProfile;
+}
 
-    public int getCaseCount() {
-        return caseCount;
-    }
+public Integer getTotalCases() { return totalCases; }
+public void setTotalCases(Integer totalCases) {
+this.totalCases = totalCases;
+}
 
-    public void setCaseCount(int caseCount) {
-        this.caseCount = caseCount;
-    }
+public LocalDate getLastIncidentDate() { return lastIncidentDate; }
+public void setLastIncidentDate(LocalDate lastIncidentDate) {
+this.lastIncidentDate = lastIncidentDate;
+}
 
-    public boolean isRepeatOffender() {
-        return repeatOffender;
-    }
-
-    public void setRepeatOffender(boolean repeatOffender) {
-        this.repeatOffender = repeatOffender;
-    }
-
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
-    }
+public String getFlagSeverity() { return flagSeverity; }
+public void setFlagSeverity(String flagSeverity) {
+this.flagSeverity = flagSeverity;
+}
 }

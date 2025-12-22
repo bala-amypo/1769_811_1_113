@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.RepeatOffenderRecord;
@@ -11,22 +11,25 @@ import com.example.demo.service.RepeatOffenderRecordService;
 @RequestMapping("/api/repeat-offenders")
 public class RepeatOffenderRecordController {
 
-    @Autowired
-    private RepeatOffenderRecordService service;
+private final RepeatOffenderRecordService service;
 
-    // Increment case count & update repeat offender status
-    @PostMapping("/refresh/{studentId}")
-    public RepeatOffenderRecord refresh(@PathVariable Long studentId) {
-        return service.createOrUpdate(studentId);
-    }
+public RepeatOffenderRecordController(
+RepeatOffenderRecordService service) {
+this.service = service;
+}
 
-    @GetMapping("/{id}")
-    public RepeatOffenderRecord getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
+@PostMapping("/refresh/{studentId}")
+public RepeatOffenderRecord refresh(@PathVariable Long studentId) {
+return service.refreshRepeatOffenderData(studentId);
+}
 
-    @GetMapping
-    public List<RepeatOffenderRecord> getAll() {
-        return service.getAll();
-    }
+@GetMapping("/student/{studentId}")
+public RepeatOffenderRecord getByStudent(@PathVariable Long studentId) {
+return service.getRecordByStudent(studentId);
+}
+
+@GetMapping
+public List<RepeatOffenderRecord> getAll() {
+return service.getAllRepeatOffenders();
+}
 }
