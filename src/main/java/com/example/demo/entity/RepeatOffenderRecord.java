@@ -32,6 +32,16 @@ this.totalCases = totalCases;
 this.flagSeverity = flagSeverity;
 }
 
+private LocalDate lastIncidentDate;
+
+public LocalDate getLastIncidentDate() {
+return lastIncidentDate;
+}
+
+public void setLastIncidentDate(LocalDate lastIncidentDate) {
+this.lastIncidentDate = lastIncidentDate;
+}
+
 public Long getId() {
 return id;
 }
