@@ -40,4 +40,23 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     public StudentProfile getByStudentIdentifier(String studentId) {
         return repo.findByStudentId(studentId);
     }
+    @Override
+public StudentProfile getByStudentIdentifier(String studentId) {
+
+return repo.findByStudentId(studentId)
+.orElseThrow(() ->
+new ResourceNotFoundException("User not found"));
+}
+
+@Override
+public StudentProfile createStudent(StudentProfile studentProfile) {
+
+if(repo.findByEmail(studentProfile.getEmail()).isPresent()) {
+throw new IllegalArgumentException("Email already in use");
+}
+
+return repo.save(studentProfile);
+}
+
+
 }
