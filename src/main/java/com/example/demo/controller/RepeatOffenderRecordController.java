@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
-
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.RepeatOffenderRecord;
@@ -12,30 +11,22 @@ import com.example.demo.service.RepeatOffenderRecordService;
 @RequestMapping("/api/repeat-offenders")
 public class RepeatOffenderRecordController {
 
-    private final RepeatOffenderRecordService service;
+    @Autowired
+    private RepeatOffenderRecordService service;
 
-    public RepeatOffenderRecordController(
-            RepeatOffenderRecordService service) {
-        this.service = service;
+    // Increment case count & update repeat offender status
+    @PostMapping("/refresh/{studentId}")
+    public RepeatOffenderRecord refresh(@PathVariable Long studentId) {
+        return service.createOrUpdate(studentId);
     }
 
-    @PostMapping("/refresh/{studentId}")
-    public ResponseEntity<RepeatOffenderRecord> refresh(
-            @PathVariable String studentId) {
-
-        return ResponseEntity.ok(
-                service.refreshRepeatOffenderData(studentId));
+    @GetMapping("/{id}")
+    public RepeatOffenderRecord getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
     @GetMapping
-    public List<RepeatOffenderRecord> all() {
-        return service.getAllRepeatOffenders();
-    }
-
-    @GetMapping("/student/{studentId}")
-    public RepeatOffenderRecord byStudent(
-            @PathVariable String studentId) {
-
-        return service.getRecordByStudent(studentId);
+    public List<RepeatOffenderRecord> getAll() {
+        return service.getAll();
     }
 }
