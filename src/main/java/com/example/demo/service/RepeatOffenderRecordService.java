@@ -5,9 +5,9 @@ import com.example.demo.entity.RepeatOffenderRecord;
 
 public interface RepeatOffenderRecordService {
 
-    RepeatOffenderRecord refreshRepeatOffenderData(String studentId);
+    RepeatOffenderRecord createOrUpdate(Long studentProfileId);
 
-    List<RepeatOffenderRecord> getAllRepeatOffenders();
+    RepeatOffenderRecord getById(Long id);
 
-    RepeatOffenderRecord getRecordByStudent(String studentId);
+    List<RepeatOffenderRecord> getAll();
 }
