@@ -11,19 +11,29 @@ public class RepeatOffenderRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-   
     @OneToOne(optional = false)
     @JoinColumn(name = "student_profile_id", nullable = false, unique = true)
     private StudentProfile studentProfile;
 
-   
     private int caseCount;
 
-   
     private boolean repeatOffender;
 
-   
     private LocalDateTime lastUpdated;
+
+    // ✅ Default constructor (required by JPA)
+    public RepeatOffenderRecord() {
+    }
+
+    // ✅ Parameterized constructor
+    public RepeatOffenderRecord(StudentProfile studentProfile,
+                                int caseCount,
+                                boolean repeatOffender) {
+        this.studentProfile = studentProfile;
+        this.caseCount = caseCount;
+        this.repeatOffender = repeatOffender;
+        this.lastUpdated = LocalDateTime.now();
+    }
 
     @PrePersist
     @PreUpdate
@@ -31,10 +41,14 @@ public class RepeatOffenderRecord {
         lastUpdated = LocalDateTime.now();
     }
 
-    
+    // Getters & Setters
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public StudentProfile getStudentProfile() {
@@ -63,5 +77,9 @@ public class RepeatOffenderRecord {
 
     public LocalDateTime getLastUpdated() {
         return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }
