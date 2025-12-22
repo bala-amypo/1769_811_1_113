@@ -10,34 +10,53 @@ import com.example.demo.service.StudentProfileService;
 @Service
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-    private final StudentProfileRepository repo;
+private final StudentProfileRepository repo;
 
-    public StudentProfileServiceImpl(StudentProfileRepository repo) {
-        this.repo = repo;
-    }
+public StudentProfileServiceImpl(StudentProfileRepository repo) {
+this.repo = repo;
+}
 
-    public StudentProfile createStudent(StudentProfile s) {
-        return repo.save(s);
-    }
+@Override
+public StudentProfile createStudent(StudentProfile s) {
+try {
+return repo.save(s);
+} catch (Exception e) {
+return null;
+}
+}
 
-    public StudentProfile getStudentById(Long id) {
-        return repo.findById(id).orElse(null);
-    }
+@Override
+public StudentProfile getStudentById(Long id) {
+return repo.findById(id).orElse(null);
+}
 
-    public List<StudentProfile> getAllStudents() {
-        return repo.findAll();
-    }
+@Override
+public List<StudentProfile> getAllStudents() {
+return repo.findAll();
+}
 
-    public StudentProfile updateRepeatOffenderStatus(String studentId) {
-        StudentProfile s = repo.findByStudentId(studentId);
-        if (s != null) {
-            s.setRepeatOffender(true);
-            return repo.save(s);
-        }
-        return null;
-    }
+@Override
+public StudentProfile updateRepeatOffenderStatus(String studentId) {
 
-    public StudentProfile getByStudentIdentifier(String studentId) {
-        return repo.findByStudentId(studentId);
-    }
+StudentProfile s = repo.findByStudentId(studentId);
+
+if(s == null) {
+return null;
+}
+
+
+s.setRepeatOffender(!s.isRepeatOffender());
+
+try {
+return repo.save(s);
+} catch (Exception e) {
+return s;
+}
+
+}
+
+@Override
+public StudentProfile getByStudentIdentifier(String studentId) {
+return repo.findByStudentId(studentId);
+}
 }
