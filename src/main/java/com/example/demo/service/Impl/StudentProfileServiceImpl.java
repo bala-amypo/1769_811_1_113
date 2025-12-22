@@ -59,4 +59,6 @@ public StudentProfile getByStudentIdentifier(String studentId) {
 
 return repo.findByStudentId(studentId)
 .orElseThrow(() ->
-new ResourceNotFoundException("User no
+new ResourceNotFoundException("User not found"));
+}
+}
