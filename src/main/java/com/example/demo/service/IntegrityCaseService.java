@@ -1,18 +1,17 @@
 package com.example.demo.service;
 
 import java.util.List;
-
+import java.util.Optional;
 import com.example.demo.entity.IntegrityCase;
 
 public interface IntegrityCaseService {
 
-    IntegrityCase createCase(IntegrityCase c);
+IntegrityCase createCase(IntegrityCase integrityCase);
 
-    IntegrityCase updateCaseStatus(Long id, String status);
+IntegrityCase updateCaseStatus(Long caseId, String newStatus);
 
-    List<IntegrityCase> getCasesByStudent(String studentId);
+List<IntegrityCase> getCasesByStudent(Long studentId);
 
-    IntegrityCase getCaseById(Long id);
+Optional<IntegrityCase> getCaseById(Long caseId);
 
-    List<IntegrityCase> getAllCases();
 }

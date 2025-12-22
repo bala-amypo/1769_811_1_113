@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -11,35 +12,31 @@ import com.example.demo.service.IntegrityCaseService;
 @RequestMapping("/api/cases")
 public class IntegrityCaseController {
 
-    private final IntegrityCaseService service;
+private final IntegrityCaseService caseService;
 
-    public IntegrityCaseController(IntegrityCaseService service) {
-        this.service = service;
-    }
+public IntegrityCaseController(IntegrityCaseService caseService) {
+this.caseService = caseService;
+}
 
-    @PostMapping
-    public IntegrityCase create(@RequestBody IntegrityCase c) {
-        return service.createCase(c);
-    }
+@PostMapping
+public IntegrityCase createCase(@RequestBody IntegrityCase integrityCase) {
+return caseService.createCase(integrityCase);
+}
 
-    @PutMapping("/{id}/status")
-    public IntegrityCase update(@PathVariable Long id,
-                                @RequestParam String status) {
-        return service.updateCaseStatus(id, status);
-    }
+@PutMapping("/{caseId}/status")
+public IntegrityCase updateCaseStatus(
+@PathVariable Long caseId,
+@RequestParam String status) {
+return caseService.updateCaseStatus(caseId, status);
+}
 
-    @GetMapping("/student/{studentId}")
-    public List<IntegrityCase> byStudent(@PathVariable String studentId) {
-        return service.getCasesByStudent(studentId);
-    }
+@GetMapping("/student/{studentId}")
+public List<IntegrityCase> getCasesByStudent(@PathVariable Long studentId) {
+return caseService.getCasesByStudent(studentId);
+}
 
-    @GetMapping("/{id}")
-    public IntegrityCase get(@PathVariable Long id) {
-        return service.getCaseById(id);
-    }
-
-    @GetMapping
-    public List<IntegrityCase> all() {
-        return service.getAllCases();
-    }
+@GetMapping("/{caseId}")
+public Optional<IntegrityCase> getCaseById(@PathVariable Long caseId) {
+return caseService.getCaseById(caseId);
+}
 }
