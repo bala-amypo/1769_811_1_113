@@ -40,7 +40,7 @@ public class IntegrityCaseServiceImpl implements IntegrityCaseService {
                         new EntityNotFoundException(
                                 "StudentProfile not found with id " + studentId));
 
-        // 🔑 IMPORTANT: reattach managed entity
+       
         c.setStudentProfile(student);
 
         return repo.save(c);
