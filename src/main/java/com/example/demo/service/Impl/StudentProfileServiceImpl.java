@@ -1,62 +1,45 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 
 @Service
-public class StudentProfileServiceImpl implements StudentProfileService {
+public class StudentProfileServiceImpl implements StudentProfileService{
 
-private final StudentProfileRepository repo;
+@Autowired
+StudentProfileRepository repo;
 
-public StudentProfileServiceImpl(StudentProfileRepository repo) {
-this.repo = repo;
+@Override
+public StudentProfile createStudent(StudentProfile student){
+if(repo.existsByEmail(student.getEmail())){
+throw new RuntimeException("Email already used");
+}
+return repo.save(student);
 }
 
 @Override
-public StudentProfile createStudent(StudentProfile s) {
-try {
-return repo.save(s);
-} catch (Exception e) {
-return null;
-}
+public StudentProfile updateRepeatOffender(String studentId,boolean repeatOffender){
+StudentProfile student=repo.findByStudentId(studentId).orElseThrow(()->new RuntimeException("User not found"));
+student.setRepeatOffender(repeatOffender);
+return repo.save(student);
 }
 
 @Override
-public StudentProfile getStudentById(Long id) {
-return repo.findById(id).orElse(null);
-}
-
-@Override
-public List<StudentProfile> getAllStudents() {
+public List<StudentProfile> getAllStudents(){
 return repo.findAll();
 }
 
 @Override
-public StudentProfile updateRepeatOffenderStatus(String studentId) {
-
-StudentProfile s = repo.findByStudentId(studentId);
-
-if(s == null) {
-return null;
-}
-
-
-s.setRepeatOffender(!s.isRepeatOffender());
-
-try {
-return repo.save(s);
-} catch (Exception e) {
-return s;
-}
-
+public StudentProfile getById(Long id){
+return repo.findById(id).orElseThrow(()->new RuntimeException("User not found"));
 }
 
 @Override
-public StudentProfile getByStudentIdentifier(String studentId) {
-return repo.findByStudentId(studentId);
+public StudentProfile getByStudentId(String studentId){
+return repo.findByStudentId(studentId).orElseThrow(()->new RuntimeException("User not found"));
 }
 }

@@ -3,15 +3,15 @@ package com.example.demo.service;
 import java.util.List;
 import com.example.demo.entity.StudentProfile;
 
-public interface StudentProfileService {
+public interface StudentProfileService{
 
-    StudentProfile createStudent(StudentProfile studentProfile);
+StudentProfile createStudent(StudentProfile student);
 
-    StudentProfile getStudentById(Long id);
+StudentProfile updateRepeatOffender(String studentId,boolean repeatOffender);
 
-    List<StudentProfile> getAllStudents();
+List<StudentProfile> getAllStudents();
 
-    StudentProfile updateRepeatOffenderStatus(String studentId);
+StudentProfile getById(Long id);
 
-    StudentProfile getByStudentIdentifier(String studentId);
+StudentProfile getByStudentId(String studentId);
 }
