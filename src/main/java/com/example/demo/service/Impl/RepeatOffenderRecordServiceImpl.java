@@ -43,7 +43,7 @@ caseRepo.findByStudentProfile_Id(studentId);
 
 int totalCases = cases.size();
 
-if (totalCases < 2) {
+if (totalCases <= 2) {
 student.setRepeatOffender(false);
 studentRepo.save(student);
 throw new IllegalStateException("Repeat offender requires at least 2 cases");
