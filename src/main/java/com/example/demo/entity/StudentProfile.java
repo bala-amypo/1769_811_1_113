@@ -31,15 +31,22 @@ public class StudentProfile {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    
-    public StudentProfile() {}
+    public StudentProfile() {
+    }
+
+    public StudentProfile(String studentId,String name,String email,String program,Integer yearLevel) {
+        this.studentId = studentId;
+        this.name = name;
+        this.email = email;
+        this.program = program;
+        this.yearLevel = yearLevel;
+        this.repeatOffender = false;
+    }
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
-   
 
     public Long getId() {
         return id;
