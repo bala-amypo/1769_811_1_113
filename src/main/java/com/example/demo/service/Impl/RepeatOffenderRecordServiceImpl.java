@@ -36,7 +36,7 @@ public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
 StudentProfile student = studentRepo.findById(studentId)
 .orElseThrow(() ->
-new ResourceNotFoundException("Student not found"));
+new RuntimeException("Student not found"));
 
 List<IntegrityCase> cases =
 caseRepo.findByStudentProfile_Id(studentId);
@@ -46,7 +46,7 @@ int totalCases = cases.size();
 if (totalCases < 2) {
 student.setRepeatOffender(false);
 studentRepo.save(student);
-throw new IllegalStateException("Repeat offender requires at least 2 cases");
+throw new RuntimeException("Repeat offender requires at least 2 cases");
 }
 
 String severity;
@@ -76,11 +76,11 @@ public RepeatOffenderRecord getRecordByStudent(Long studentId) {
 
 StudentProfile student = studentRepo.findById(studentId)
 .orElseThrow(() ->
-new ResourceNotFoundException("Student not found"));
+new RuntimeException("Student not found"));
 
 return recordRepo.findByStudentProfile(student)
 .orElseThrow(() ->
-new ResourceNotFoundException("Repeat offender record not found"));
+new RuntimeException("Repeat offender record not found"));
 }
 
 @Override
