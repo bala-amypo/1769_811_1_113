@@ -1,26 +1,18 @@
 package com.example.demo.exception;
 
-import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(EntityNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
+@ExceptionHandler(ResourceNotFoundException.class)
+public ResponseEntity<String> handle(ResourceNotFoundException e){
+return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+}
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleBadRequest(IllegalArgumentException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
-
-    
+@ExceptionHandler(IllegalArgumentException.class)
+public ResponseEntity<String> handleIllegal(IllegalArgumentException e){
+return ResponseEntity.badRequest().body(e.getMessage());
+}
 }

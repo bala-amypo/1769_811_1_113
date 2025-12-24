@@ -4,7 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import com.example.demo.entity.*;
 
-public interface AppUserRepository extends JpaRepository<AppUser,Long>{
-Optional<AppUser> findByEmail(String email);
-boolean existsByEmail(String email);
+public interface IntegrityCaseRepository extends JpaRepository<IntegrityCase,Long>
+{
+java.util.List<IntegrityCase> findByStudentProfile_Id(Long id);
 }
+
