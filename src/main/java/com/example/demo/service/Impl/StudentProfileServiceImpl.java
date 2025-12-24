@@ -59,33 +59,41 @@ return studentProfileRepository.findAll();
 }
 
 @Override
-public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+public StudentProfile updateRepeatOffenderStatus(Long id) {
 
-StudentProfile student = studentProfileRepository.findById(studentId)
+StudentProfile student =
+studentProfileRepository.findById(id)
 .orElseThrow(() ->
-new ResourceNotFoundException("StudentProfile not found with id: " + studentId)
+new ResourceNotFoundException(
+"StudentProfile not found with id: " + id
+)
 );
 
 List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentIdentifier(student.getStudentId());
+integrityCaseRepository.findByStudentIdentifier(
+student.getStudentId()
+);
 
-
-RepeatOffenderRecord calculatedRecord =
-repeatOffenderCalculator.calculate(student,cases);
+RepeatOffenderRecord calculated =
+repeatOffenderCalculator.computeRepeatOffenderRecord(
+student,
+cases
+);
 
 RepeatOffenderRecord record =
 repeatOffenderRecordRepository
 .findByStudentProfile(student)
-.orElse(calculatedRecord);
+.orElse(calculated);
 
-record.setTotalCases(calculatedRecord.getTotalCases());
-record.setFlagSeverity(calculatedRecord.getFlagSeverity());
-record.setFirstIncidentDate(calculatedRecord.getFirstIncidentDate());
+record.setTotalCases(calculated.getTotalCases());
+record.setFlagSeverity(calculated.getFlagSeverity());
+record.setFirstIncidentDate(calculated.getFirstIncidentDate());
 
 repeatOffenderRecordRepository.save(record);
 
-student.setRepeatOffender(calculatedRecord.getTotalCases() >= 2);
+student.setRepeatOffender(calculated.getTotalCases() >= 2);
 
 return studentProfileRepository.save(student);
 }
+
 }
