@@ -12,9 +12,16 @@ import com.example.demo.entity.IntegrityCase;
 public interface IntegrityCaseRepository
 extends JpaRepository<IntegrityCase,Long> {
 
-List<IntegrityCase> findByStudentIdentifier(Long studentId);
-
-List<IntegrityCase> findByStudentProfile_StudentId(String studentId);
+/*
+ CORRECT: uses BUSINESS ID (String)
+*/
+@Query("""
+select c from IntegrityCase c
+where c.studentProfile.studentId = :studentId
+""")
+List<IntegrityCase> findByStudentIdentifier(
+@Param("studentId") String studentId
+);
 
 List<IntegrityCase> findByStatus(String status);
 
