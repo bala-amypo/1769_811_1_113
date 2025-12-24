@@ -71,7 +71,7 @@ new ResourceNotFoundException(
 
 List<IntegrityCase> cases =
 integrityCaseRepository.findByStudentIdentifier(
-student.getStudentId()
+student.getStudentId()   // ✅ String → String
 );
 
 RepeatOffenderRecord calculated =
@@ -82,7 +82,7 @@ cases
 
 RepeatOffenderRecord record =
 repeatOffenderRecordRepository
-.findByStudentProfile(student)
+.findByStudentProfile(student)   // ✅ StudentProfile, not String/Long
 .orElse(calculated);
 
 record.setTotalCases(calculated.getTotalCases());
