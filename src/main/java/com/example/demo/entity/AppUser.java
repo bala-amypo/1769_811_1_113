@@ -113,6 +113,5 @@ return studentProfiles;
 public void setStudentProfiles(Set<StudentProfile> studentProfiles) {
 this.studentProfiles = studentProfiles;
 }
-public void setId(long id){
-this.id=id;
+
 }
