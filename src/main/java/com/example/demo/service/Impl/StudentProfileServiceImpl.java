@@ -67,7 +67,8 @@ new ResourceNotFoundException("StudentProfile not found with id: " + studentId)
 );
 
 List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentProfile_Id(studentId);
+integrityCaseRepository.findByStudentIdentifier(student.getStudentId());
+
 
 RepeatOffenderRecord calculatedRecord =
 repeatOffenderCalculator.calculate(student,cases);
