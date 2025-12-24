@@ -16,20 +16,15 @@ public class RepeatOffenderRecordServiceImpl
 implements RepeatOffenderCalculator {
 
 @Override
-public RepeatOffenderRecord calculate(
+public RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile studentProfile,
 List<IntegrityCase> cases
 ) {
-
 int totalCases = cases.size();
 
 String severity = "LOW";
-if(totalCases >= 4) {
-severity = "HIGH";
-}
-else if(totalCases >= 2) {
-severity = "MEDIUM";
-}
+if(totalCases >= 4) severity = "HIGH";
+else if(totalCases >= 2) severity = "MEDIUM";
 
 LocalDate firstIncidentDate = cases.stream()
 .map(IntegrityCase::getIncidentDate)
@@ -43,4 +38,5 @@ firstIncidentDate,
 severity
 );
 }
+
 }

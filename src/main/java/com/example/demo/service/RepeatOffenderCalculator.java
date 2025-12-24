@@ -7,7 +7,7 @@ import com.example.demo.entity.RepeatOffenderRecord;
 
 public interface RepeatOffenderCalculator {
 
-RepeatOffenderRecord calculate(
+RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile studentProfile,
 List<IntegrityCase> cases
 );
