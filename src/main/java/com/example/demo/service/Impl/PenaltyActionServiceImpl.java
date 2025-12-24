@@ -1,27 +1,52 @@
 package com.example.demo.service.impl;
 
 import org.springframework.stereotype.Service;
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import com.example.demo.service.*;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.entity.PenaltyAction;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.repository.PenaltyActionRepository;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.service.PenaltyActionService;
 
 @Service
+@Transactional
 public class PenaltyActionServiceImpl implements PenaltyActionService {
 
-private final PenaltyActionRepository penaltyRepo;
-private final IntegrityCaseRepository caseRepo;
+private final PenaltyActionRepository penaltyActionRepository;
+private final IntegrityCaseRepository integrityCaseRepository;
 
 public PenaltyActionServiceImpl(
-PenaltyActionRepository penaltyRepo,
-IntegrityCaseRepository caseRepo){
-this.penaltyRepo=penaltyRepo;
-this.caseRepo=caseRepo;
+PenaltyActionRepository penaltyActionRepository,
+IntegrityCaseRepository integrityCaseRepository
+) {
+this.penaltyActionRepository = penaltyActionRepository;
+this.integrityCaseRepository = integrityCaseRepository;
 }
 
-public PenaltyAction addPenalty(PenaltyAction p){
-IntegrityCase c=caseRepo.findById(p.getIntegrityCase().getId()).orElseThrow();
-c.setStatus("UNDER_REVIEW");
-caseRepo.save(c);
-return penaltyRepo.save(p);
+@Override
+public PenaltyAction addPenalty(PenaltyAction penaltyAction) {
+
+if(penaltyAction.getIntegrityCase() == null ||
+penaltyAction.getIntegrityCase().getId() == null) {
+throw new IllegalArgumentException("IntegrityCase is required to add a penalty");
+}
+
+IntegrityCase integrityCase =
+integrityCaseRepository.findById(
+penaltyAction.getIntegrityCase().getId()
+).orElseThrow(() ->
+new IllegalArgumentException("IntegrityCase not found")
+);
+
+penaltyAction.setIntegrityCase(integrityCase);
+
+if("OPEN".equals(integrityCase.getStatus())) {
+integrityCase.setStatus("UNDER_REVIEW");
+}
+
+integrityCaseRepository.save(integrityCase);
+
+return penaltyActionRepository.save(penaltyAction);
 }
 }
