@@ -80,4 +80,12 @@ this.submittedBy = submittedBy;
 public LocalDateTime getSubmittedAt() {
 return submittedAt;
 }
+public void setId(Long id) {
+this.id = id;
+}
+
+public void setSubmittedAt(LocalDateTime submittedAt) {
+this.submittedAt = submittedAt;
+}
+
 }

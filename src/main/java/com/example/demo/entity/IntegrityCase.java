@@ -121,4 +121,16 @@ return evidenceRecords;
 public Set<PenaltyAction> getPenaltyActions() {
 return penaltyActions;
 }
+public void setId(Long id) {
+this.id = id;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+this.createdAt = createdAt;
+}
+
+public Set<PenaltyAction> getPenalties() {
+return penaltyActions;
+}
+
 }
