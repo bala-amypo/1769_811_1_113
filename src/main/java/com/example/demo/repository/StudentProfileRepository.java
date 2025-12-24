@@ -7,7 +7,7 @@ import com.example.demo.entity.StudentProfile;
 public interface StudentProfileRepository
 extends JpaRepository<StudentProfile,Long> {
 
-Optional<StudentProfile> findByStudentIdentifier(String studentId);
+Optional<StudentProfile> findByStudentId(String studentId);
 
 boolean existsByStudentId(String studentId);
 }

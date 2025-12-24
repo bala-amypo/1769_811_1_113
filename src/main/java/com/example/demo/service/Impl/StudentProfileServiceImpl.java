@@ -62,29 +62,22 @@ public StudentProfile updateRepeatOffenderStatus(Long id) {
 StudentProfile student =
 studentProfileRepository.findById(id)
 .orElseThrow(() ->
-new ResourceNotFoundException("StudentProfile not found with id: " + id)
+new ResourceNotFoundException(
+"StudentProfile not found with id: " + id
+)
 );
 
-/*
- USE STRING studentId FOR CASE LOOKUP
-*/
 List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentIdentifier(
-student.getStudentId()
+integrityCaseRepository.findByStudentProfile_Id(
+student.getId()
 );
 
-/*
- CALCULATE REPEAT OFFENDER DATA
-*/
 RepeatOffenderRecord calculated =
 repeatOffenderCalculator.computeRepeatOffenderRecord(
 student,
 cases
 );
 
-/*
- CREATE OR UPDATE RECORD
-*/
 RepeatOffenderRecord record =
 repeatOffenderRecordRepository
 .findByStudentProfile(student)
@@ -96,11 +89,9 @@ record.setFirstIncidentDate(calculated.getFirstIncidentDate());
 
 repeatOffenderRecordRepository.save(record);
 
-/*
- UPDATE STUDENT FLAG
-*/
 student.setRepeatOffender(calculated.getTotalCases() >= 2);
 
 return studentProfileRepository.save(student);
 }
+
 }
