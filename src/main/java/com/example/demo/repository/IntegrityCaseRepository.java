@@ -1,14 +1,10 @@
 package com.example.demo.repository;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.entity.IntegrityCase;
+import java.util.Optional;
+import com.example.demo.entity.*;
 
-public interface IntegrityCaseRepository
-extends JpaRepository<IntegrityCase, Long> {
-
-List<IntegrityCase> findByStudentProfile_Id(Long studentProfileId);
-
-List<IntegrityCase> findByStudentProfile_StudentId(String studentId);
-
+public interface AppUserRepository extends JpaRepository<AppUser,Long>{
+Optional<AppUser> findByEmail(String email);
+boolean existsByEmail(String email);
 }
