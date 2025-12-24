@@ -65,18 +65,10 @@ return integrityCaseRepository.save(integrityCase);
 @Override
 public List<IntegrityCase> getCasesByStudent(Long studentId) {
 
-StudentProfile student =
-studentProfileRepository.findById(studentId)
-.orElseThrow(() ->
-new IllegalArgumentException(
-"StudentProfile not found with id: " + studentId
-)
-);
+return integrityCaseRepository.findByStudentProfile_Id(studentId);
 
-return integrityCaseRepository.findByStudentIdentifier(
-student.getStudentId()   
-);
 }
+
 
 
 @Override
