@@ -65,7 +65,7 @@ return integrityCaseRepository.save(integrityCase);
 @Override
 public List<IntegrityCase> getCasesByStudent(Long studentId) {
 
-return integrityCaseRepository.findByStudentProfile_Id(studentId);
+return integrityCaseRepository.findByStudentIdentifier(studentId);
 }
 
 @Override

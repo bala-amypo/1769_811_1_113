@@ -12,7 +12,7 @@ import com.example.demo.entity.IntegrityCase;
 public interface IntegrityCaseRepository
 extends JpaRepository<IntegrityCase,Long> {
 
-List<IntegrityCase> findByStudentProfile_Id(Long studentId);
+List<IntegrityCase> findByStudentIdentifier(Long studentId);
 
 List<IntegrityCase> findByStudentProfile_StudentId(String studentId);
 
