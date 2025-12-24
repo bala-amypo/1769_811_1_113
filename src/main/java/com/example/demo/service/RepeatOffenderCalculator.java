@@ -1,15 +1,14 @@
 package com.example.demo.service;
 
-public class RepeatOffenderCalculator {
+import java.util.List;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.RepeatOffenderRecord;
 
-public String calculateSeverity(int totalCases){
-if(totalCases==1) return "LOW";
-if(totalCases==2) return "MEDIUM";
-if(totalCases>=4) return "HIGH";
-return "NONE";
-}
+public interface RepeatOffenderCalculator {
 
-public boolean isRepeatOffender(int totalCases){
-return totalCases>=2;
-}
+RepeatOffenderRecord calculate(
+StudentProfile studentProfile,
+List<IntegrityCase> cases
+);
 }
