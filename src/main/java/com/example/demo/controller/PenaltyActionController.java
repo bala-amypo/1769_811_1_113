@@ -1,38 +1,39 @@
 package com.example.demo.controller;
 
 import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.PenaltyAction;
-import com.example.demo.service.PenaltyActionService;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.service.StudentProfileService;
 
 @RestController
-@RequestMapping("/api/penalties")
-public class PenaltyActionController {
+@RequestMapping("/api/students")
+public class StudentProfileController {
 
-    private final PenaltyActionService service;
+private final StudentProfileService studentProfileService;
 
-    public PenaltyActionController(PenaltyActionService service) {
-        this.service = service;
-    }
+public StudentProfileController(StudentProfileService studentProfileService) {
+this.studentProfileService = studentProfileService;
+}
 
-    @PostMapping
-    public PenaltyAction add(@RequestBody PenaltyAction p) {
-        return service.addPenalty(p);
-    }
+@PostMapping
+public StudentProfile create(@RequestBody StudentProfile studentProfile) {
+return studentProfileService.createStudent(studentProfile);
+}
 
-    @GetMapping("/case/{caseId}")
-    public List<PenaltyAction> byCase(@PathVariable Long caseId) {
-        return service.getPenaltiesByCase(caseId);
-    }
+@GetMapping("/{id}")
+public StudentProfile getById(@PathVariable Long id) {
+return studentProfileService.getStudentById(id);
+}
 
-    @GetMapping("/{id}")
-    public PenaltyAction get(@PathVariable Long id) {
-        return service.getPenaltyById(id);
-    }
+@GetMapping
+public List<StudentProfile> getAll() {
+return studentProfileService.getAllStudents();
+}
 
-    @GetMapping
-    public List<PenaltyAction> all() {
-        return service.getAllPenalties();
-    }
+@PutMapping("/{id}/repeat-status")
+public StudentProfile updateRepeatStatus(@PathVariable Long id) {
+return studentProfileService.updateRepeatOffenderStatus(id);
+}
 }
