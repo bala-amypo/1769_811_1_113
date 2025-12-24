@@ -16,11 +16,11 @@ this.password = password;
 this.role = role;
 }
 
-public String getName() {
+public String getFullName() {
 return name;
 }
 
-public void setName(String name) {
+public void setFullName(String name) {
 this.name = name;
 }
 
