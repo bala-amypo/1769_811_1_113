@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
-public class CustomeUserDetailsService {
+import org.springframework.stereotype.Service;
 
+@Service
+public class CustomUserDetailsService {
 }
