@@ -13,7 +13,8 @@ import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.service.StudentProfileService;
-import com.example.demo.service.RepeatOffenderCalculator;
+import com.example.demo.util.RepeatOffenderCalculator;
+
 
 @Service
 @Transactional

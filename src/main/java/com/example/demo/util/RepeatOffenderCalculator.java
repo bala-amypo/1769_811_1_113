@@ -41,5 +41,3 @@ record.setFlagSeverity("LOW");
 return record;
 }
 }
-
-

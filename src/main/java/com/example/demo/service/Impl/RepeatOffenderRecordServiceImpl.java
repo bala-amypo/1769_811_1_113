@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.entity.RepeatOffenderRecord;
-import com.example.demo.service.RepeatOffenderCalculator;
+import com.example.demo.util.RepeatOffenderCalculator;
+
 
 @Service
 public class RepeatOffenderRecordServiceImpl
