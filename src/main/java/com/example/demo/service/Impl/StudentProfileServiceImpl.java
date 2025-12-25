@@ -78,6 +78,7 @@ student,
 cases
 );
 
+
 RepeatOffenderRecord record =
 repeatOffenderRecordRepository
 .findByStudentProfile(student)

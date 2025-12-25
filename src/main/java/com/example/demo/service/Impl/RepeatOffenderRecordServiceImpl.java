@@ -15,6 +15,9 @@ import com.example.demo.service.RepeatOffenderCalculator;
 public class RepeatOffenderRecordServiceImpl
 implements RepeatOffenderCalculator {
 
+public RepeatOffenderRecordServiceImpl() {
+}
+
 @Override
 public RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile studentProfile,
