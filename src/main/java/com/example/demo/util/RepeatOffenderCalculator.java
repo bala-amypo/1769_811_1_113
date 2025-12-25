@@ -1,37 +1,18 @@
 package com.example.demo.util;
 
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.entity.RepeatOffenderRecord;
-import com.example.demo.entity.StudentProfile;
+import com.example.demo.entity.*;
 
 public class RepeatOffenderCalculator {
 
 public RepeatOffenderRecord computeRepeatOffenderRecord(
-StudentProfile studentProfile,
+StudentProfile student,
 List<IntegrityCase> cases
 ) {
 
-int totalCases = cases.size();
+int count = cases.size();
+String level = count >= 4 ? "HIGH" : count >= 2 ? "MEDIUM" : "LOW";
 
-String severity = "LOW";
-if(totalCases >= 4) severity = "HIGH";
-else if(totalCases >= 2) severity = "MEDIUM";
-
-LocalDate firstIncidentDate =
-cases.stream()
-.map(IntegrityCase::getIncidentDate)
-.min(Comparator.naturalOrder())
-.orElse(null);
-
-return new RepeatOffenderRecord(
-studentProfile,
-totalCases,
-firstIncidentDate,
-severity
-);
+return new RepeatOffenderRecord(student, count, null, level);
 }
 }
