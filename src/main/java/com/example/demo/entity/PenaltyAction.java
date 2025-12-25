@@ -80,4 +80,12 @@ this.issuedBy = issuedBy;
 public LocalDateTime getIssuedAt() {
 return issuedAt;
 }
+public void setId(Long id) {
+this.id = id;
+}
+
+public void setIssuedAt(LocalDateTime issuedAt) {
+this.issuedAt = issuedAt;
+}
+
 }
