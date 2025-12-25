@@ -36,8 +36,9 @@ private LocalDate incidentDate;
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-@OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL, orphanRemoval = true)
-private Set<EvidenceRecord> evidenceRecords = new HashSet<>();
+@OneToMany(mappedBy = "integrityCase")
+private List<EvidenceRecord> evidenceRecords = new ArrayList<>();
+
 
 @OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set<PenaltyAction> penaltyActions = new HashSet<>();
