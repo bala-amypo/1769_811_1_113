@@ -40,8 +40,9 @@ private LocalDateTime createdAt;
 private List<EvidenceRecord> evidenceRecords = new ArrayList<>();
 
 
-@OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL, orphanRemoval = true)
-private Set<PenaltyAction> penaltyActions = new HashSet<>();
+@OneToMany(mappedBy = "integrityCase")
+private List<PenaltyAction> penaltyActions = new ArrayList<>();
+
 
 public IntegrityCase() {}
 
@@ -115,11 +116,11 @@ public LocalDateTime getCreatedAt() {
 return createdAt;
 }
 
-public Set<EvidenceRecord> getEvidenceRecords() {
+public List<EvidenceRecord> getEvidenceRecords() {
 return evidenceRecords;
 }
 
-public Set<PenaltyAction> getPenaltyActions() {
+public List<PenaltyAction> getPenaltyActions() {
 return penaltyActions;
 }
 public void setId(Long id) {
@@ -130,8 +131,12 @@ public void setCreatedAt(LocalDateTime createdAt) {
 this.createdAt = createdAt;
 }
 
-public Set<PenaltyAction> getPenalties() {
+public List<PenaltyAction> getPenalties() {
 return penaltyActions;
 }
+public List<IntegrityCase> getIntegrityCases() {
+return integrityCases;
+}
+
 
 }
