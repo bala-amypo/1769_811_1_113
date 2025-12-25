@@ -1,4 +1,7 @@
 package com.example.demo.entity;
+import java.util.List;
+import java.util.ArrayList;
+
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -134,9 +137,7 @@ this.createdAt = createdAt;
 public List<PenaltyAction> getPenalties() {
 return penaltyActions;
 }
-public List<IntegrityCase> getIntegrityCases() {
-return integrityCases;
-}
+
 
 
 }
