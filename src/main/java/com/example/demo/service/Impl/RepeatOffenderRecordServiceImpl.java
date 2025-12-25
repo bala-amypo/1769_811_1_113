@@ -5,12 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.entity.RepeatOffenderRecord;
-import com.example.demo.entity.StudentProfile;
-import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository;
-import com.example.demo.repository.StudentProfileRepository;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.RepeatOffenderRecordService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
@@ -65,7 +61,7 @@ new IllegalArgumentException("Student not found: " + studentId)
 
 return recordRepo.findByStudentProfile(student)
 .orElseThrow(() ->
-new IllegalArgumentException("RepeatOffenderRecord not found")
+new IllegalArgumentException("Repeat offender record not found")
 );
 }
 }
