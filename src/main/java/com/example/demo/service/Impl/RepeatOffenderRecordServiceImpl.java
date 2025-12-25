@@ -37,7 +37,7 @@ this.calculator = calculator;
 }
 
 @Override
-public RepeatOffenderRecord recompute(Long studentId) {
+public RepeatOffenderRecord recalculate(Long studentId) {
 
 StudentProfile student =
 studentRepo.findById(studentId)
