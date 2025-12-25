@@ -18,7 +18,7 @@ implements RepeatOffenderCalculator {
 public RepeatOffenderRecordServiceImpl() {
 }
 
-@Override
+
 public RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile studentProfile,
 List<IntegrityCase> cases
