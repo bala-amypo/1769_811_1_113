@@ -4,7 +4,7 @@ import com.example.demo.entity.RepeatOffenderRecord;
 
 public interface RepeatOffenderRecordService {
 
-RepeatOffenderRecord recalculate(Long studentProfileId);
+RepeatOffenderRecord recalculate(Long studentId);
 
-RepeatOffenderRecord getByStudent(Long studentProfileId);
+RepeatOffenderRecord getByStudent(Long studentId);
 }
