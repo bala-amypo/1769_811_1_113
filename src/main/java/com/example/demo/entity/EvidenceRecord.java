@@ -15,6 +15,7 @@ private Long id;
 @JoinColumn(name = "integrity_case_id", nullable = false)
 private IntegrityCase integrityCase;
 
+
 @Column(nullable = false)
 private String evidenceType;
 

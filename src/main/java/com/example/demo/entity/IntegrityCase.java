@@ -46,6 +46,10 @@ private List<EvidenceRecord> evidenceRecords = new ArrayList<>();
 @OneToMany(mappedBy = "integrityCase")
 private List<PenaltyAction> penaltyActions = new ArrayList<>();
 
+import java.util.List;
+
+@OneToMany(mappedBy = "integrityCase", cascade = CascadeType.ALL)
+private List<Evidence> evidences;
 
 public IntegrityCase() {}
 
