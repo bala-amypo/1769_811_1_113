@@ -109,9 +109,6 @@ public LocalDateTime getCreatedAt() {
 return createdAt;
 }
 
-public Set<IntegrityCase> getIntegrityCases() {
-return integrityCases;
-}
 
 public void setIntegrityCases(Set<IntegrityCase> integrityCases) {
 this.integrityCases = integrityCases;
