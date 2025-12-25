@@ -1,46 +1,71 @@
 package com.example.demo.service.impl;
 
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.IntegrityCase;
-import com.example.demo.entity.StudentProfile;
 import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
+import com.example.demo.service.RepeatOffenderRecordService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
-
 @Service
+@Transactional
 public class RepeatOffenderRecordServiceImpl
-implements RepeatOffenderCalculator {
+implements RepeatOffenderRecordService {
 
-public RepeatOffenderRecordServiceImpl() {
+private final StudentProfileRepository studentRepo;
+private final IntegrityCaseRepository caseRepo;
+private final RepeatOffenderRecordRepository recordRepo;
+private final RepeatOffenderCalculator calculator;
+
+public RepeatOffenderRecordServiceImpl(
+StudentProfileRepository studentRepo,
+IntegrityCaseRepository caseRepo,
+RepeatOffenderRecordRepository recordRepo,
+RepeatOffenderCalculator calculator
+) {
+this.studentRepo = studentRepo;
+this.caseRepo = caseRepo;
+this.recordRepo = recordRepo;
+this.calculator = calculator;
 }
 
+@Override
+public RepeatOffenderRecord recompute(Long studentId) {
 
-public RepeatOffenderRecord computeRepeatOffenderRecord(
-StudentProfile studentProfile,
-List<IntegrityCase> cases
-) {
-int totalCases = cases.size();
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new IllegalArgumentException("Student not found: " + studentId)
+);
 
-String severity = "LOW";
-if(totalCases >= 4) severity = "HIGH";
-else if(totalCases >= 2) severity = "MEDIUM";
+List<IntegrityCase> cases =
+caseRepo.findByStudentIdentifier(student.getStudentId());
 
-LocalDate firstIncidentDate = cases.stream()
-.map(IntegrityCase::getIncidentDate)
-.min(Comparator.naturalOrder())
-.orElse(null);
+RepeatOffenderRecord record =
+calculator.computeRepeatOffenderRecord(student, cases);
 
-return new RepeatOffenderRecord(
-studentProfile,
-totalCases,
-firstIncidentDate,
-severity
+return recordRepo.save(record);
+}
+
+@Override
+public RepeatOffenderRecord getByStudent(Long studentId) {
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new IllegalArgumentException("Student not found: " + studentId)
+);
+
+return recordRepo.findByStudentProfile(student)
+.orElseThrow(() ->
+new IllegalArgumentException("RepeatOffenderRecord not found")
 );
 }
-
 }

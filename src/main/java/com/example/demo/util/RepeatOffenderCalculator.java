@@ -1,6 +1,7 @@
 package com.example.demo.util;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -13,31 +14,26 @@ import com.example.demo.entity.StudentProfile;
 public class RepeatOffenderCalculator {
 
 public RepeatOffenderRecord computeRepeatOffenderRecord(
-StudentProfile student,
+StudentProfile studentProfile,
 List<IntegrityCase> cases
 ) {
 
-RepeatOffenderRecord record = new RepeatOffenderRecord();
-record.setStudentProfile(student);
-record.setTotalCases(cases.size());
+int totalCases = cases.size();
 
-if(!cases.isEmpty()) {
-record.setFirstIncidentDate(
-cases.stream()
+String severity = "LOW";
+if(totalCases >= 4) severity = "HIGH";
+else if(totalCases >= 2) severity = "MEDIUM";
+
+LocalDate firstIncidentDate = cases.stream()
 .map(IntegrityCase::getIncidentDate)
-.min(LocalDate::compareTo)
-.orElse(null)
+.min(Comparator.naturalOrder())
+.orElse(null);
+
+return new RepeatOffenderRecord(
+studentProfile,
+totalCases,
+firstIncidentDate,
+severity
 );
-}
-
-if(cases.size() >= 4) {
-record.setFlagSeverity("HIGH");
-} else if(cases.size() >= 2) {
-record.setFlagSeverity("MEDIUM");
-} else {
-record.setFlagSeverity("LOW");
-}
-
-return record;
 }
 }
