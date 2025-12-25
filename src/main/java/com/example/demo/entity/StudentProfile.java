@@ -1,5 +1,6 @@
 package com.example.demo.entity;
-
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -121,6 +122,11 @@ this.id = id;
 
 public void setCreatedAt(LocalDateTime createdAt) {
 this.createdAt = createdAt;
+}
+
+
+public List<IntegrityCase> getIntegrityCases() {
+return new ArrayList<>(integrityCases);
 }
 
 }

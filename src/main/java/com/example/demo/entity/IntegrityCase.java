@@ -46,11 +46,6 @@ private List<EvidenceRecord> evidenceRecords = new ArrayList<>();
 @OneToMany(mappedBy = "integrityCase")
 private List<PenaltyAction> penaltyActions = new ArrayList<>();
 
-private Set<IntegrityCase> integrityCases;
-
-public Set<IntegrityCase> getIntegrityCases() {
-return integrityCases;
-}
 
 public IntegrityCase() {}
 
