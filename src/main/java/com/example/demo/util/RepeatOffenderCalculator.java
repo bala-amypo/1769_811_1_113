@@ -12,7 +12,7 @@ import com.example.demo.entity.StudentProfile;
 @Component
 public class RepeatOffenderCalculator {
 
-public RepeatOffenderRecord calculate(
+public RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile student,
 List<IntegrityCase> cases
 ) {
@@ -41,3 +41,5 @@ record.setFlagSeverity("LOW");
 return record;
 }
 }
+
+
