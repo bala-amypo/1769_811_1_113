@@ -9,5 +9,5 @@ RepeatOffenderRecord recalculate(Long studentId);
 RepeatOffenderRecord getByStudent(Long studentId);
 
 RepeatOffenderRecord refreshRepeatOffenderData(Long studentId);
-
+RepeatOffenderRecord updateRepeatOffenderStatus(Long studentId);
 }
