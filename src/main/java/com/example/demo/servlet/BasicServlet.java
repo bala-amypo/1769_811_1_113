@@ -10,36 +10,28 @@ import jakarta.servlet.http.HttpServletResponse;
 public class BasicServlet extends HttpServlet {
 
 @Override
-protected void doGet(
-HttpServletRequest request,
-HttpServletResponse response
-) throws IOException {
+protected void doGet(HttpServletRequest request,HttpServletResponse response)
+throws IOException {
 
 response.setStatus(HttpServletResponse.SC_OK);
+response.setContentType("text/plain");
+response.setCharacterEncoding("UTF-8");
 
-try {
 PrintWriter out = response.getWriter();
-out.write("GET OK");
+out.write("OK");
 out.flush();
-} catch (IOException e) {
-response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-}
 }
 
 @Override
-protected void doPost(
-HttpServletRequest request,
-HttpServletResponse response
-) throws IOException {
+protected void doPost(HttpServletRequest request,HttpServletResponse response)
+throws IOException {
 
 response.setStatus(HttpServletResponse.SC_CREATED);
+response.setContentType("text/plain");
+response.setCharacterEncoding("UTF-8");
 
-try {
 PrintWriter out = response.getWriter();
-out.write("POST CREATED");
+out.write("CREATED");
 out.flush();
-} catch (IOException e) {
-response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-}
 }
 }
