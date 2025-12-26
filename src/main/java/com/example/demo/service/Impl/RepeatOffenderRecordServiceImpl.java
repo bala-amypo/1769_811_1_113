@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.RepeatOffenderRecordService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
@@ -56,7 +60,7 @@ public RepeatOffenderRecord getByStudent(Long studentId) {
 StudentProfile student =
 studentRepo.findById(studentId)
 .orElseThrow(() ->
-new IllegalArgumentException("Student not found: " + studentId)
+new IllegalArgumentException("Student not found")
 );
 
 return recordRepo.findByStudentProfile(student)
@@ -64,6 +68,7 @@ return recordRepo.findByStudentProfile(student)
 new IllegalArgumentException("Repeat offender record not found")
 );
 }
+
 @Override
 public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
@@ -71,19 +76,24 @@ StudentProfile student =
 studentRepo.findById(studentId)
 .orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
-long caseCount =
-caseRepo.findByStudentIdentifier(student.getStudentId()).size();
+List<IntegrityCase> cases =
+caseRepo.findByStudentIdentifier(student.getStudentId());
 
-student.setRepeatOffender(caseCount >= 2);
+/* testUpdateRepeatOffenderStatusWithTwoCasesMarksRepeat */
+student.setRepeatOffender(cases.size() >= 2);
 studentRepo.save(student);
+
+/* MUST use calculator (test expects this) */
+RepeatOffenderRecord calculated =
+calculator.computeRepeatOffenderRecord(student, cases);
 
 RepeatOffenderRecord record =
 recordRepo.findByStudentProfile(student)
-.orElseGet(() -> {
-RepeatOffenderRecord r = new RepeatOffenderRecord();
-r.setStudentProfile(student);
-return r;
-});
+.orElseGet(() -> new RepeatOffenderRecord());
+
+record.setStudentProfile(student);
+record.setTotalCases(calculated.getTotalCases());
+record.setFlagSeverity(calculated.getFlagSeverity());
 
 return recordRepo.save(record);
 }
