@@ -36,10 +36,13 @@ this.details = details;
 this.issuedBy = issuedBy;
 }
 
-@PrePersist
+private java.time.LocalDateTime createdAt;
+
+@jakarta.persistence.PrePersist
 protected void onCreate() {
 this.createdAt = java.time.LocalDateTime.now();
 }
+
 
 
 public Long getId() {

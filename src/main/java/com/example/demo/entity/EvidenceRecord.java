@@ -37,10 +37,13 @@ this.content = content;
 this.submittedBy = submittedBy;
 }
 
-@PrePersist
+private java.time.LocalDateTime createdAt;
+
+@jakarta.persistence.PrePersist
 protected void onCreate() {
 this.createdAt = java.time.LocalDateTime.now();
 }
+
 
 
 public Long getId() {
