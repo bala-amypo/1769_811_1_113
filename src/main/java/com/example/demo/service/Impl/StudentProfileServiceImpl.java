@@ -58,42 +58,29 @@ return studentProfileRepository.findAll();
 }
 
 @Override
-public StudentProfile updateRepeatOffenderStatus(Long id) {
+public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
 StudentProfile student =
-studentProfileRepository.findById(id)
-.orElseThrow(() ->
-new ResourceNotFoundException(
-"StudentProfile not found with id: " + id
-)
-);
+studentRepo.findById(studentId)
+.orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
 List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentProfile_Id(
-student.getId()
-);
+caseRepo.findByStudentProfile(student);
 
 RepeatOffenderRecord calculated =
-repeatOffenderCalculator.computeRepeatOffenderRecord(
-student,
-cases
-);
-
-
-RepeatOffenderRecord record =
-repeatOffenderRecordRepository
-.findByStudentProfile(student)
-.orElse(calculated);
-
-record.setTotalCases(calculated.getTotalCases());
-record.setFlagSeverity(calculated.getFlagSeverity());
-record.setFirstIncidentDate(calculated.getFirstIncidentDate());
-
-repeatOffenderRecordRepository.save(record);
+calculator.computeRepeatOffenderRecord(student, cases);
 
 student.setRepeatOffender(calculated.getTotalCases() >= 2);
 
-return studentProfileRepository.save(student);
+studentRepo.save(student);
+
+repeatOffenderRecordRepo.findByStudentProfile(student)
+.orElseGet(() -> {
+return repeatOffenderRecordRepo.save(calculated);
+});
+
+return student;
 }
+
 
 }
