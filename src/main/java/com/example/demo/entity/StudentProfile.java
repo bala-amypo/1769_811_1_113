@@ -145,5 +145,9 @@ return repeatOffender;
 }
 
 
+public StudentProfile() {
+this.createdAt = LocalDateTime.now();
+this.repeatOffender = false;
+}
 
 }
