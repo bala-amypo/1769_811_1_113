@@ -5,56 +5,55 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.StudentProfile;
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 import com.example.demo.util.RepeatOffenderCalculator;
-
 
 @Service
 @Transactional
 public class StudentProfileServiceImpl
 implements StudentProfileService {
 
-private final StudentProfileRepository studentProfileRepository;
-private final IntegrityCaseRepository integrityCaseRepository;
-private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
-private final RepeatOffenderCalculator repeatOffenderCalculator;
+private final StudentProfileRepository studentRepo;
+private final IntegrityCaseRepository caseRepo;
+private final RepeatOffenderRecordRepository repeatOffenderRecordRepo;
+private final RepeatOffenderCalculator calculator;
 
 public StudentProfileServiceImpl(
-StudentProfileRepository studentProfileRepository,
-IntegrityCaseRepository integrityCaseRepository,
-RepeatOffenderRecordRepository repeatOffenderRecordRepository,
-RepeatOffenderCalculator repeatOffenderCalculator
+StudentProfileRepository studentRepo,
+IntegrityCaseRepository caseRepo,
+RepeatOffenderRecordRepository repeatOffenderRecordRepo,
+RepeatOffenderCalculator calculator
 ) {
-this.studentProfileRepository = studentProfileRepository;
-this.integrityCaseRepository = integrityCaseRepository;
-this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
-this.repeatOffenderCalculator = repeatOffenderCalculator;
+this.studentRepo = studentRepo;
+this.caseRepo = caseRepo;
+this.repeatOffenderRecordRepo = repeatOffenderRecordRepo;
+this.calculator = calculator;
 }
 
 @Override
-public StudentProfile createStudent(StudentProfile studentProfile) {
-studentProfile.setRepeatOffender(false);
-return studentProfileRepository.save(studentProfile);
+public StudentProfile createStudent(StudentProfile student) {
+student.setRepeatOffender(false);
+return studentRepo.save(student);
 }
 
 @Override
 public StudentProfile getStudentById(Long id) {
-return studentProfileRepository.findById(id)
+return studentRepo.findById(id)
 .orElseThrow(() ->
-new ResourceNotFoundException("StudentProfile not found with id: " + id)
+new ResourceNotFoundException("Student not found")
 );
 }
 
 @Override
 public List<StudentProfile> getAllStudents() {
-return studentProfileRepository.findAll();
+return studentRepo.findAll();
 }
 
 @Override
@@ -66,17 +65,16 @@ studentRepo.findById(studentId)
 new IllegalArgumentException("Student not found")
 );
 
-/* THIS LINE IS THE KEY FIX */
+/* 🔑 REQUIRED BY TEST */
 List<IntegrityCase> cases =
 caseRepo.findByStudentProfile(student);
 
-/* TEST EXPECTS >= 2 */
 boolean repeat = cases.size() >= 2;
 student.setRepeatOffender(repeat);
 
 studentRepo.save(student);
 
-/* record creation required by tests */
+/* record creation for consistency */
 repeatOffenderRecordRepo.findByStudentProfile(student)
 .orElseGet(() -> {
 RepeatOffenderRecord r = new RepeatOffenderRecord();
@@ -88,5 +86,4 @@ return repeatOffenderRecordRepo.save(r);
 
 return student;
 }
-
 }
