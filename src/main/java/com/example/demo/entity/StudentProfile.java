@@ -42,7 +42,10 @@ private LocalDateTime createdAt;
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set<IntegrityCase> integrityCases = new HashSet<>();
 
-public StudentProfile() {}
+public StudentProfile() {
+this.createdAt = LocalDateTime.now();
+this.repeatOffender = false;
+}
 
 public StudentProfile(String studentId,String name,String email,String program,Integer yearLevel) {
 this.studentId = studentId;
@@ -50,13 +53,12 @@ this.name = name;
 this.email = email;
 this.program = program;
 this.yearLevel = yearLevel;
-this.repeatOffender = false;
+
 }
 
 @PrePersist
-public StudentProfile() {
+protected void onCreate() {
 this.createdAt = LocalDateTime.now();
-this.repeatOffender = false;
 }
 
 public AppUser getUser() {
