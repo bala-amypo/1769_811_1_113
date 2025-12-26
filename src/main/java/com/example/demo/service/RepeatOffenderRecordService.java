@@ -8,7 +8,6 @@ RepeatOffenderRecord recalculate(Long studentId);
 
 RepeatOffenderRecord getByStudent(Long studentId);
 
-/* REQUIRED BY TESTS */
-RepeatOffenderRecord updateRepeatOffenderStatus(Long studentId);
+
 
 }

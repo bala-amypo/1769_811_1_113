@@ -56,39 +56,13 @@ public RepeatOffenderRecord getByStudent(Long studentId) {
 StudentProfile student =
 studentRepo.findById(studentId)
 .orElseThrow(() ->
-new IllegalArgumentException("Student not found: " + studentId)
+new IllegalArgumentException("Student not found")
 );
 
 return recordRepo.findByStudentProfile(student)
 .orElseThrow(() ->
 new IllegalArgumentException("Repeat offender record not found")
 );
-}
-
-@Override
-public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-
-StudentProfile student =
-studentRepo.findById(studentId)
-.orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-
-List<IntegrityCase> cases =
-caseRepo.findByStudentProfile(student);
-
-/* 🔑 THIS LINE FIXES THE TEST */
-boolean repeat = cases.size() >= 2;
-student.setRepeatOffender(repeat);
-
-studentRepo.save(student);
-
-/* record is secondary – test does not depend on it */
-RepeatOffenderRecord record =
-calculator.computeRepeatOffenderRecord(student, cases);
-
-recordRepo.findByStudentProfile(student)
-.orElseGet(() -> recordRepo.save(record));
-
-return student;
 }
 
 
