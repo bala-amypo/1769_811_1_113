@@ -37,12 +37,14 @@ this.content = content;
 this.submittedBy = submittedBy;
 }
 
+@jakarta.persistence.Column(nullable = false, updatable = false)
 private java.time.LocalDateTime createdAt;
 
 @jakarta.persistence.PrePersist
 protected void onCreate() {
 this.createdAt = java.time.LocalDateTime.now();
 }
+
 
 
 
