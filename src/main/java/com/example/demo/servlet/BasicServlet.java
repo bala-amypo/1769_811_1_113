@@ -18,7 +18,7 @@ response.setContentType("text/plain");
 response.setCharacterEncoding("UTF-8");
 
 PrintWriter out = response.getWriter();
-out.write("OK");
+out.write("Ok");
 out.flush();
 }
 
@@ -31,7 +31,7 @@ response.setContentType("text/plain");
 response.setCharacterEncoding("UTF-8");
 
 PrintWriter out = response.getWriter();
-out.write("CREATED");
+out.write("Created");
 out.flush();
 }
 }
