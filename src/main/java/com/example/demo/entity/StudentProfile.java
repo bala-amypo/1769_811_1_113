@@ -38,18 +38,18 @@ private boolean repeatOffender = false;
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-
-@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-private List<IntegrityCase> integrityCases;
-
+@OneToMany(
+mappedBy = "studentProfile",
+cascade = CascadeType.ALL,
+orphanRemoval = true
+)
+private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 }
 
-@PrePersist
-protected void onCreate() { this.createdAt = LocalDateTime.now(); }
-
+/* getters and setters */
 
 public Long getId() {
 return id;
