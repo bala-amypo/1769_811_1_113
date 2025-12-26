@@ -112,7 +112,7 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
-public Boolean getRepeatOffender() {
+public boolean getRepeatOffender() {
 return repeatOffender;
 }
 
