@@ -38,7 +38,7 @@ private boolean repeatOffender = false;
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-@ManyToOne(
+@OneToMany(
 mappedBy = "studentProfile",
 cascade = CascadeType.ALL,
 orphanRemoval = true
