@@ -65,7 +65,7 @@ studentRepo.findById(studentId)
 new IllegalArgumentException("Student not found")
 );
 
-/* 🔑 REQUIRED BY TEST */
+
 List<IntegrityCase> cases =
 caseRepo.findByStudentProfile(student);
 
@@ -74,7 +74,7 @@ student.setRepeatOffender(repeat);
 
 studentRepo.save(student);
 
-/* record creation for consistency */
+
 repeatOffenderRecordRepo.findByStudentProfile(student)
 .orElseGet(() -> {
 RepeatOffenderRecord r = new RepeatOffenderRecord();
