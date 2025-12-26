@@ -14,6 +14,7 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
+@JsonIgnore
 @ManyToOne
 @JoinColumn(name = "user_id")
 private AppUser user;
@@ -42,12 +43,10 @@ private boolean repeatOffender = false;
 private LocalDateTime createdAt;
 
 
-@OneToMany(
-mappedBy = "studentProfile",
-cascade = CascadeType.ALL,
-orphanRemoval = true
-)
+@JsonIgnore
+@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 private List<IntegrityCase> integrityCases = new ArrayList<>();
+
 
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
