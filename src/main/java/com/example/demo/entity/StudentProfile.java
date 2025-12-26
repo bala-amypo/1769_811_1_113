@@ -50,7 +50,7 @@ this.name = name;
 this.email = email;
 this.program = program;
 this.yearLevel = yearLevel;
-this.repeatOffender = false;
+
 }
 
 @PrePersist
