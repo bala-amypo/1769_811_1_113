@@ -2,12 +2,11 @@ package com.example.demo.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.StudentProfile;
 
-public interface StudentProfileRepository
-extends JpaRepository<StudentProfile, Long> {
+public interface RepeatOffenderRecordRepository
+extends JpaRepository<RepeatOffenderRecord,Long> {
 
-Optional<StudentProfile> findByStudentId(String studentId);
-
-boolean existsByEmail(String email);
+Optional<RepeatOffenderRecord> findByStudentProfile(StudentProfile studentProfile);
 }
