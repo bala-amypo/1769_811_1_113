@@ -40,11 +40,10 @@ this.submittedBy = submittedBy;
 @jakarta.persistence.Column(nullable = false, updatable = false)
 private java.time.LocalDateTime createdAt;
 
-@PrePersist
-public EvidenceRecord() {
-this.submittedAt = LocalDateTime.now();
+@jakarta.persistence.PrePersist
+protected void onCreate() {
+this.createdAt = java.time.LocalDateTime.now();
 }
-
 
 
 
