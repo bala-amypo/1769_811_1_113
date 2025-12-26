@@ -32,11 +32,15 @@ private String program;
 @Column(nullable = false)
 private Integer yearLevel;
 
+
+@JsonIgnore
 @Column(nullable = false)
 private boolean repeatOffender = false;
 
+@JsonIgnore
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
+
 
 @OneToMany(
 mappedBy = "studentProfile",
