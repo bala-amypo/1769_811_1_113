@@ -28,7 +28,10 @@ private String submittedBy;
 @Column(nullable = false, updatable = false)
 private LocalDateTime submittedAt;
 
-public EvidenceRecord() {}
+public EvidenceRecord() {
+this.submittedAt = LocalDateTime.now();
+}
+
 
 public EvidenceRecord(IntegrityCase integrityCase,String evidenceType,String content,String submittedBy) {
 this.integrityCase = integrityCase;

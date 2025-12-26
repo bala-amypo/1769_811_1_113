@@ -27,7 +27,9 @@ private String issuedBy;
 @Column(nullable = false, updatable = false)
 private LocalDateTime issuedAt;
 
-public PenaltyAction() {}
+public PenaltyAction() {
+this.issuedAt = LocalDateTime.now();
+}
 
 public PenaltyAction(IntegrityCase integrityCase,String penaltyType,String details,String issuedBy) {
 this.integrityCase = integrityCase;
