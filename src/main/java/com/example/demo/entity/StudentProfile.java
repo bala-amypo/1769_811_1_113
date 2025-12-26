@@ -54,8 +54,9 @@ this.repeatOffender = false;
 }
 
 @PrePersist
-protected void onCreate() {
+public StudentProfile() {
 this.createdAt = LocalDateTime.now();
+this.repeatOffender = false;
 }
 
 public AppUser getUser() {
@@ -145,9 +146,5 @@ return repeatOffender;
 }
 
 
-public StudentProfile() {
-this.createdAt = LocalDateTime.now();
-this.repeatOffender = false;
-}
 
 }
