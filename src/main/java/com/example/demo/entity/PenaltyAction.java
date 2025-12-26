@@ -38,8 +38,9 @@ this.issuedBy = issuedBy;
 
 @PrePersist
 protected void onCreate() {
-this.issuedAt = LocalDateTime.now();
+this.createdAt = java.time.LocalDateTime.now();
 }
+
 
 public Long getId() {
 return id;

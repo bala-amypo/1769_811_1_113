@@ -39,8 +39,9 @@ this.submittedBy = submittedBy;
 
 @PrePersist
 protected void onCreate() {
-this.submittedAt = LocalDateTime.now();
+this.createdAt = java.time.LocalDateTime.now();
 }
+
 
 public Long getId() {
 return id;
