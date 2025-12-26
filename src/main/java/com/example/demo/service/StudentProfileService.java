@@ -5,7 +5,7 @@ import com.example.demo.entity.StudentProfile;
 
 public interface StudentProfileService {
 
-StudentProfile createStudent(StudentProfile studentProfile);
+StudentProfile createStudent(StudentProfile student);
 
 StudentProfile getStudentById(Long id);
 

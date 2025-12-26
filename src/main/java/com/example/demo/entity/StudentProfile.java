@@ -1,10 +1,9 @@
 package com.example.demo.entity;
-import java.util.ArrayList;
-import java.util.List;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "student_profiles")
@@ -13,11 +12,6 @@ public class StudentProfile {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
-
-@ManyToOne
-@JoinColumn(name = "user_id", nullable = false)
-private AppUser user;
-
 
 @Column(nullable = false, unique = true)
 private String studentId;
@@ -34,44 +28,32 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-private Boolean repeatOffender = false;
+private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, orphanRemoval = true)
-private Set<IntegrityCase> integrityCases = new HashSet<>();
+@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
+private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 this.repeatOffender = false;
 }
 
-public StudentProfile(String studentId,String name,String email,String program,Integer yearLevel) {
-this.studentId = studentId;
-this.name = name;
-this.email = email;
-this.program = program;
-this.yearLevel = yearLevel;
-
-}
-
 @PrePersist
-protected void onCreate() {
+public void prePersist() {
+if (createdAt == null) {
 this.createdAt = LocalDateTime.now();
 }
-
-public AppUser getUser() {
-return user;
 }
-
-public void setUser(AppUser user) {
-this.user = user;
-}
-
 
 public Long getId() {
 return id;
+}
+
+public void setId(Long id) {
+this.id = id;
 }
 
 public String getStudentId() {
@@ -114,11 +96,15 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
-public Boolean getRepeatOffender() {
+public boolean getRepeatOffender() {
 return repeatOffender;
 }
 
-public void setRepeatOffender(Boolean repeatOffender) {
+public boolean isRepeatOffender() {
+return repeatOffender;
+}
+
+public void setRepeatOffender(boolean repeatOffender) {
 this.repeatOffender = repeatOffender;
 }
 
@@ -126,27 +112,11 @@ public LocalDateTime getCreatedAt() {
 return createdAt;
 }
 
+public List<IntegrityCase> getIntegrityCases() {
+return integrityCases;
+}
 
-public void setIntegrityCases(Set<IntegrityCase> integrityCases) {
+public void setIntegrityCases(List<IntegrityCase> integrityCases) {
 this.integrityCases = integrityCases;
 }
-public void setId(Long id) {
-this.id = id;
-}
-
-public void setCreatedAt(LocalDateTime createdAt) {
-this.createdAt = createdAt;
-}
-
-
-public List<IntegrityCase> getIntegrityCases() {
-return new ArrayList<>(integrityCases);
-}
-
-public boolean isRepeatOffender() {
-return repeatOffender;
-}
-
-
-
 }
