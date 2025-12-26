@@ -4,8 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.RepeatOffenderRecordService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
@@ -31,26 +35,18 @@ this.calculator = calculator;
 }
 
 @Override
-public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
 StudentProfile student =
 studentRepo.findById(studentId)
-.orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+.orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
 List<IntegrityCase> cases =
 caseRepo.findByStudentProfile(student);
 
-student.setRepeatOffender(cases.size() >= 2);
-studentRepo.save(student);
-
-repeatRepo.findByStudentProfile(student)
-.orElseGet(() -> {
-RepeatOffenderRecord r =
+RepeatOffenderRecord record =
 calculator.computeRepeatOffenderRecord(student,cases);
-return repeatRepo.save(r);
-});
 
-return student;
+return recordRepo.save(record);
 }
-
 }

@@ -20,6 +20,9 @@ private Integer totalCases;
 @Column(nullable = false)
 private String flagSeverity;
 
+public RepeatOffenderRecord() {
+}
+
 public Long getId() {
 return id;
 }

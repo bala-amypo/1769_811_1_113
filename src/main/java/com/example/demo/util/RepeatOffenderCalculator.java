@@ -14,14 +14,17 @@ List<IntegrityCase> cases
 ) {
 
 RepeatOffenderRecord record = new RepeatOffenderRecord();
+
 record.setStudentProfile(student);
 record.setTotalCases(cases.size());
 
 if(cases.size() >= 4) {
 record.setFlagSeverity("HIGH");
-} else if(cases.size() >= 2) {
+}
+else if(cases.size() >= 2) {
 record.setFlagSeverity("MEDIUM");
-} else {
+}
+else {
 record.setFlagSeverity("LOW");
 }
 
