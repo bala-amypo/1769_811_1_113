@@ -39,10 +39,9 @@ private boolean repeatOffender = false;
 private LocalDateTime createdAt;
 
 
-@ManyToOne(optional = true)
-@JoinColumn(name = "user_id", nullable = true)
+@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
+private List<IntegrityCase> integrityCases;
 
-private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
