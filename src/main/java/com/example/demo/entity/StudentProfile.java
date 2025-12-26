@@ -36,7 +36,7 @@ private Integer yearLevel;
 private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
-@JsonIgnore private LocalDateTime createdAt;
+private LocalDateTime createdAt;
 
 
 @ManyToOne(optional = true)
