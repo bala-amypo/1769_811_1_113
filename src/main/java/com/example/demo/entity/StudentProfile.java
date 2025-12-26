@@ -34,7 +34,8 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-private Boolean repeatOffender = false;
+private boolean repeatOffender = false;
+
 
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
