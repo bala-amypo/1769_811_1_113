@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "repeat_offender_records")
@@ -11,34 +10,22 @@ public class RepeatOffenderRecord {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@ManyToOne(optional = false)
-@JoinColumn(name = "student_profile_id", nullable = false)
+@OneToOne(optional = false)
+@JoinColumn(name = "student_id")
 private StudentProfile studentProfile;
 
 @Column(nullable = false)
 private Integer totalCases;
 
-private LocalDate firstIncidentDate;
-
 @Column(nullable = false)
 private String flagSeverity;
 
-public RepeatOffenderRecord() {}
-
-public RepeatOffenderRecord(
-StudentProfile studentProfile,
-Integer totalCases,
-LocalDate firstIncidentDate,
-String flagSeverity
-) {
-this.studentProfile = studentProfile;
-this.totalCases = totalCases;
-this.firstIncidentDate = firstIncidentDate;
-this.flagSeverity = flagSeverity;
-}
-
 public Long getId() {
 return id;
+}
+
+public void setId(Long id) {
+this.id = id;
 }
 
 public StudentProfile getStudentProfile() {
@@ -55,14 +42,6 @@ return totalCases;
 
 public void setTotalCases(Integer totalCases) {
 this.totalCases = totalCases;
-}
-
-public LocalDate getFirstIncidentDate() {
-return firstIncidentDate;
-}
-
-public void setFirstIncidentDate(LocalDate firstIncidentDate) {
-this.firstIncidentDate = firstIncidentDate;
 }
 
 public String getFlagSeverity() {
