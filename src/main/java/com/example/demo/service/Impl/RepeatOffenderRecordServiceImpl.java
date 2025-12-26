@@ -64,4 +64,28 @@ return recordRepo.findByStudentProfile(student)
 new IllegalArgumentException("Repeat offender record not found")
 );
 }
+@Override
+public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() -> new IllegalArgumentException("Student not found"));
+
+long caseCount =
+caseRepo.findByStudentIdentifier(student.getStudentId()).size();
+
+student.setRepeatOffender(caseCount >= 2);
+studentRepo.save(student);
+
+RepeatOffenderRecord record =
+recordRepo.findByStudentProfile(student)
+.orElseGet(() -> {
+RepeatOffenderRecord r = new RepeatOffenderRecord();
+r.setStudentProfile(student);
+return r;
+});
+
+return recordRepo.save(record);
+}
+
 }
