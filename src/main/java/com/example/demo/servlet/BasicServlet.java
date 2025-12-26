@@ -14,11 +14,8 @@ protected void doGet(HttpServletRequest request,HttpServletResponse response)
 throws IOException {
 
 response.setStatus(HttpServletResponse.SC_OK);
-response.setContentType("text/plain");
-response.setCharacterEncoding("UTF-8");
-
 PrintWriter out = response.getWriter();
-out.write("Ok");
+out.write("Servlet is running");
 out.flush();
 }
 
@@ -27,11 +24,8 @@ protected void doPost(HttpServletRequest request,HttpServletResponse response)
 throws IOException {
 
 response.setStatus(HttpServletResponse.SC_CREATED);
-response.setContentType("text/plain");
-response.setCharacterEncoding("UTF-8");
-
 PrintWriter out = response.getWriter();
-out.write("Created");
+out.write("Servlet POST handled");
 out.flush();
 }
 }
