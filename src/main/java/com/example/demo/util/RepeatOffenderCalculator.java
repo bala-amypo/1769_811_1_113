@@ -1,10 +1,11 @@
 package com.example.demo.util;
 
 import java.util.List;
-import org.springframework.stereotype.Component;
-import com.example.demo.entity.*;
 
-@Component
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
+
 public class RepeatOffenderCalculator {
 
 public RepeatOffenderRecord computeRepeatOffenderRecord(
@@ -12,10 +13,18 @@ StudentProfile student,
 List<IntegrityCase> cases
 ) {
 
-int count = cases.size();
-String level = count >= 4 ? "HIGH" : count >= 2 ? "MEDIUM" : "LOW";
+RepeatOffenderRecord record = new RepeatOffenderRecord();
+record.setStudentProfile(student);
+record.setTotalCases(cases.size());
 
-return new RepeatOffenderRecord(student, count, null, level);
+if(cases.size() >= 4) {
+record.setFlagSeverity("HIGH");
+} else if(cases.size() >= 2) {
+record.setFlagSeverity("MEDIUM");
+} else {
+record.setFlagSeverity("LOW");
 }
 
+return record;
+}
 }
