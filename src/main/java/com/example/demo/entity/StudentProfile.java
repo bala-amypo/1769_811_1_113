@@ -34,8 +34,7 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-private boolean repeatOffender = false;
-
+private Boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
@@ -51,7 +50,7 @@ this.name = name;
 this.email = email;
 this.program = program;
 this.yearLevel = yearLevel;
-
+this.repeatOffender = false;
 }
 
 @PrePersist
@@ -112,7 +111,7 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
-public boolean getRepeatOffender() {
+public Boolean getRepeatOffender() {
 return repeatOffender;
 }
 
