@@ -14,6 +14,11 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
+@ManyToOne
+@JoinColumn(name = "user_id", nullable = false)
+private AppUser user;
+
+
 @Column(nullable = false, unique = true)
 private String studentId;
 
@@ -52,6 +57,15 @@ this.repeatOffender = false;
 protected void onCreate() {
 this.createdAt = LocalDateTime.now();
 }
+
+public AppUser getUser() {
+return user;
+}
+
+public void setUser(AppUser user) {
+this.user = user;
+}
+
 
 public Long getId() {
 return id;
