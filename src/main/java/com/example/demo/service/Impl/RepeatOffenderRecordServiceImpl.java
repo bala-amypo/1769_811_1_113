@@ -5,8 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.entity.RepeatOffenderRecord;
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.RepeatOffenderRecordService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
@@ -32,15 +36,53 @@ this.recordRepo = recordRepo;
 this.calculator = calculator;
 }
 
-import java.util.List;
-import com.example.demo.entity.RepeatOffenderRecord;
+@Override
+public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
-RepeatOffenderRecord refreshRepeatOffenderData(Long studentId);
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new IllegalArgumentException("Student not found")
+);
 
-RepeatOffenderRecord getRecordByStudent(Long studentId);
+List<IntegrityCase> cases =
+caseRepo.findByStudentProfile(student);
 
-List<RepeatOffenderRecord> getAllRepeatOffenders();
+RepeatOffenderRecord calculated =
+calculator.computeRepeatOffenderRecord(student, cases);
 
+RepeatOffenderRecord record =
+recordRepo.findByStudentProfile(student)
+.orElseGet(() -> new RepeatOffenderRecord());
 
+record.setStudentProfile(student);
+record.setTotalCases(calculated.getTotalCases());
+record.setFlagSeverity(calculated.getFlagSeverity());
+
+student.setRepeatOffender(cases.size() >= 2);
+studentRepo.save(student);
+
+return recordRepo.save(record);
+}
+
+@Override
+public RepeatOffenderRecord getRecordByStudent(Long studentId) {
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new IllegalArgumentException("Student not found")
+);
+
+return recordRepo.findByStudentProfile(student)
+.orElseThrow(() ->
+new IllegalArgumentException("Repeat offender record not found")
+);
+}
+
+@Override
+public List<RepeatOffenderRecord> getAllRepeatOffenders() {
+return recordRepo.findAll();
+}
 
 }
