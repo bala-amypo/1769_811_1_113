@@ -140,4 +140,10 @@ public List<IntegrityCase> getIntegrityCases() {
 return new ArrayList<>(integrityCases);
 }
 
+public boolean isRepeatOffender() {
+return repeatOffender;
+}
+
+
+
 }
