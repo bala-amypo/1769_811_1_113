@@ -33,35 +33,27 @@ this.calculator = calculator;
 }
 
 @Override
-public RepeatOffenderRecord recalculate(Long studentId) {
+public RepeatOffenderRecord refreshRepeatOffenderData(Long studentId) {
 
 StudentProfile student =
 studentRepo.findById(studentId)
-.orElseThrow(() ->
-new IllegalArgumentException("Student not found: " + studentId)
-);
+.orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
-List<IntegrityCase> cases =
-caseRepo.findByStudentIdentifier(student.getStudentId());
+long caseCount =
+caseRepo.findByStudentIdentifier(student.getStudentId()).size();
+
+student.setRepeatOffender(caseCount >= 2);
+studentRepo.save(student);
 
 RepeatOffenderRecord record =
-calculator.computeRepeatOffenderRecord(student, cases);
+recordRepo.findByStudentProfile(student)
+.orElseGet(() -> {
+RepeatOffenderRecord r = new RepeatOffenderRecord();
+r.setStudentProfile(student);
+return r;
+});
 
 return recordRepo.save(record);
 }
 
-@Override
-public RepeatOffenderRecord getByStudent(Long studentId) {
-
-StudentProfile student =
-studentRepo.findById(studentId)
-.orElseThrow(() ->
-new IllegalArgumentException("Student not found: " + studentId)
-);
-
-return recordRepo.findByStudentProfile(student)
-.orElseThrow(() ->
-new IllegalArgumentException("Repeat offender record not found")
-);
-}
 }
