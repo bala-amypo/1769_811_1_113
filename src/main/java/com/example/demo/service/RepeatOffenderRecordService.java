@@ -7,6 +7,6 @@ public interface RepeatOffenderRecordService {
 RepeatOffenderRecord recalculate(Long studentId);
 
 RepeatOffenderRecord getByStudent(Long studentId);
-RepeatOffenderRecord updateRepeatOffenderData(Long studentId);
+RepeatOffenderRecord updateRepeatOffenderStatus(Long studentId);
 
 }
