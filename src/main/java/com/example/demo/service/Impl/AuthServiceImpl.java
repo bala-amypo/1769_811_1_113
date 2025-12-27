@@ -1,7 +1,5 @@
 package com.example.demo.service.impl;
 
-import java.util.Optional;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,9 +14,10 @@ import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.AuthService;
 
 @Service
-public class AuthServiceImpl {
+public class AuthServiceImpl implements AuthService {
 
 private final AppUserRepository appUserRepository;
 private final RoleRepository roleRepository;
@@ -40,6 +39,7 @@ this.authenticationManager = authenticationManager;
 this.jwtTokenProvider = jwtTokenProvider;
 }
 
+@Override
 public void register(RegisterRequest request) {
 
 if (appUserRepository.existsByEmail(request.getEmail())) {
@@ -58,6 +58,7 @@ user.getRoles().add(role);
 appUserRepository.save(user);
 }
 
+@Override
 public JwtResponse login(LoginRequest request) {
 
 Authentication authentication =
