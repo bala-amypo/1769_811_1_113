@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -33,15 +34,20 @@ private boolean repeatOffender = false;
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
+/* 🔑 MUST be initialized (tests expect non-null) */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-private List<IntegrityCase> integrityCases;
+private List<IntegrityCase> integrityCases = new ArrayList<>();
 
+/* 🔑 MUST initialize createdAt here (tests use new StudentProfile()) */
 public StudentProfile() {
+this.createdAt = LocalDateTime.now();
 }
 
 @PrePersist
 protected void onCreate() {
+if (this.createdAt == null) {
 this.createdAt = LocalDateTime.now();
+}
 }
 
 /* ===== getters & setters expected by tests ===== */
@@ -94,12 +100,10 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
-/* 🔑 TEST EXPECTS THIS METHOD NAME */
 public boolean getRepeatOffender() {
 return repeatOffender;
 }
 
-/* (keep isRepeatOffender also if you want) */
 public boolean isRepeatOffender() {
 return repeatOffender;
 }
@@ -108,7 +112,6 @@ public void setRepeatOffender(boolean repeatOffender) {
 this.repeatOffender = repeatOffender;
 }
 
-/* 🔑 TEST EXPECTS THIS */
 public LocalDateTime getCreatedAt() {
 return createdAt;
 }
@@ -117,7 +120,6 @@ public void setCreatedAt(LocalDateTime createdAt) {
 this.createdAt = createdAt;
 }
 
-/* 🔑 TEST EXPECTS THIS */
 public List<IntegrityCase> getIntegrityCases() {
 return integrityCases;
 }
