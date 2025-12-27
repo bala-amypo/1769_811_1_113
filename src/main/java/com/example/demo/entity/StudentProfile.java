@@ -45,7 +45,7 @@ private LocalDateTime createdAt;
 @JsonIgnore
 private AppUser user;
 
-/* Needed for JPA + tests */
+
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
@@ -54,14 +54,9 @@ public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 }
 
-@PrePersist
-protected void onCreate() {
-if (this.createdAt == null) {
-this.createdAt = LocalDateTime.now();
-}
-}
 
-/* getters & setters unchanged */
+
+
 
 public Long getId() { return id; }
 public void setId(Long id) { this.id = id; }
