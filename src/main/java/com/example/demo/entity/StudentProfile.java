@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,10 @@ public class StudentProfile {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
+
+@ManyToOne
+@JoinColumn(name = "user_id")
+private AppUser user;
 
 @Column(nullable = false, unique = true)
 private String studentId;
@@ -34,11 +39,17 @@ private boolean repeatOffender = false;
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-/* 🔑 MUST be initialized (tests expect non-null) */
+/* Needed for mapping but hidden from JSON */
+@ManyToOne
+@JoinColumn(name = "user_id")
+@JsonIgnore
+private AppUser user;
+
+/* Needed for JPA + tests but hidden from JSON */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
+@JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
-/* 🔑 MUST initialize createdAt here (tests use new StudentProfile()) */
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 }
@@ -50,7 +61,7 @@ this.createdAt = LocalDateTime.now();
 }
 }
 
-/* ===== getters & setters expected by tests ===== */
+/* ===== Getters & Setters ===== */
 
 public Long getId() {
 return id;
@@ -120,6 +131,14 @@ public void setCreatedAt(LocalDateTime createdAt) {
 this.createdAt = createdAt;
 }
 
+public AppUser getUser() {
+return user;
+}
+
+public void setUser(AppUser user) {
+this.user = user;
+}
+
 public List<IntegrityCase> getIntegrityCases() {
 return integrityCases;
 }
@@ -127,5 +146,4 @@ return integrityCases;
 public void setIntegrityCases(List<IntegrityCase> integrityCases) {
 this.integrityCases = integrityCases;
 }
-
 }
