@@ -6,7 +6,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "student_profiles")
@@ -37,60 +48,109 @@ private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
 @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-private LocalDateTime createdAt;
+private LocalDateTime createdAt = LocalDateTime.now();
 
-/* Needed for mapping only */
 @ManyToOne
 @JoinColumn(name = "user_id")
 @JsonIgnore
 private AppUser user;
 
-/* Needed for JPA + tests */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
-public StudentProfile() {
-this.createdAt = LocalDateTime.now();
-}
+public StudentProfile() {}
 
 @PrePersist
 protected void onCreate() {
-if (this.createdAt == null) {
-this.createdAt = LocalDateTime.now();
+if (createdAt == null) {
+createdAt = LocalDateTime.now();
 }
 }
 
-/* getters & setters unchanged */
+/* ---------- GETTERS & SETTERS ---------- */
 
-public Long getId() { return id; }
-public void setId(Long id) { this.id = id; }
+public Long getId() {
+return id;
+}
 
-public String getStudentId() { return studentId; }
-public void setStudentId(String studentId) { this.studentId = studentId; }
+public void setId(Long id) {
+this.id = id;
+}
 
-public String getName() { return name; }
-public void setName(String name) { this.name = name; }
+public String getStudentId() {
+return studentId;
+}
 
-public String getEmail() { return email; }
-public void setEmail(String email) { this.email = email; }
+public void setStudentId(String studentId) {
+this.studentId = studentId;
+}
 
-public String getProgram() { return program; }
-public void setProgram(String program) { this.program = program; }
+public String getName() {
+return name;
+}
 
-public Integer getYearLevel() { return yearLevel; }
-public void setYearLevel(Integer yearLevel) { this.yearLevel = yearLevel; }
+public void setName(String name) {
+this.name = name;
+}
 
-public boolean getRepeatOffender() { return repeatOffender; }
-public boolean isRepeatOffender() { return repeatOffender; }
-public void setRepeatOffender(boolean repeatOffender) { this.repeatOffender = repeatOffender; }
+public String getEmail() {
+return email;
+}
 
-public LocalDateTime getCreatedAt() { return createdAt; }
-public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+public void setEmail(String email) {
+this.email = email;
+}
 
-public AppUser getUser() { return user; }
-public void setUser(AppUser user) { this.user = user; }
+public String getProgram() {
+return program;
+}
 
-public List<IntegrityCase> getIntegrityCases() { return integrityCases; }
-public void setIntegrityCases(List<IntegrityCase> integrityCases) { this.integrityCases = integrityCases; }
+public void setProgram(String program) {
+this.program = program;
+}
+
+public Integer getYearLevel() {
+return yearLevel;
+}
+
+public void setYearLevel(Integer yearLevel) {
+this.yearLevel = yearLevel;
+}
+
+public boolean isRepeatOffender() {
+return repeatOffender;
+}
+
+public boolean getRepeatOffender() {
+return repeatOffender;
+}
+
+public void setRepeatOffender(boolean repeatOffender) {
+this.repeatOffender = repeatOffender;
+}
+
+public LocalDateTime getCreatedAt() {
+return createdAt;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+this.createdAt = createdAt;
+}
+
+public AppUser getUser() {
+return user;
+}
+
+public void setUser(AppUser user) {
+this.user = user;
+}
+
+public List<IntegrityCase> getIntegrityCases() {
+return integrityCases;
+}
+
+public void setIntegrityCases(List<IntegrityCase> integrityCases) {
+this.integrityCases = integrityCases;
+}
 }
