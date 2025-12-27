@@ -14,7 +14,7 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@JsonIgnore
+
 @ManyToOne
 @JoinColumn(name = "user_id")
 private AppUser user;
@@ -34,16 +34,16 @@ private String program;
 private Integer yearLevel;
 
 
-@JsonIgnore
+
 @Column(nullable = false)
 private boolean repeatOffender = false;
 
-@JsonIgnore
+
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
 
-@JsonIgnore
+
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
