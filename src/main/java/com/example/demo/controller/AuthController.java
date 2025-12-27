@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.example.demo.dto.JwtResponse;
 import com.example.demo.dto.LoginRequest;
