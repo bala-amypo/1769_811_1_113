@@ -14,7 +14,7 @@ public class StudentProfile {
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private Long id;
 
 @Column(nullable = false, unique = true)
@@ -32,11 +32,11 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private LocalDateTime createdAt;
 
 /* Needed for mapping only */
@@ -47,7 +47,7 @@ private AppUser user;
 
 /* Needed for JPA + tests */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-
+@JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
