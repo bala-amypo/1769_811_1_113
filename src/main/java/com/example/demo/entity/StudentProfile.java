@@ -51,7 +51,7 @@ private AppUser user;
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
-
+this.createdAt = LocalDateTime.now();
 }
 
 @PrePersist
