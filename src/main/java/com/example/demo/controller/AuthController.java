@@ -16,7 +16,7 @@ private final AuthService authService;
 public AuthController(AuthService authService) {
 this.authService = authService;
 }
-
+@PreAuthorize()
 @PostMapping("/register")
 public void register(@RequestBody RegisterRequest request) {
 authService.register(request);
