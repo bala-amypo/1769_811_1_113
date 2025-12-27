@@ -1,9 +1,6 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,18 +11,13 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@JsonIgnore
-@ManyToOne
-@JoinColumn(name = "user_id")
-private AppUser user;
-
 @Column(nullable = false, unique = true)
 private String studentId;
 
 @Column(nullable = false)
 private String name;
 
-@Column(nullable = false)
+@Column(nullable = false, unique = true)
 private String email;
 
 private String program;
@@ -33,26 +25,19 @@ private String program;
 @Column(nullable = false)
 private Integer yearLevel;
 
-
-@JsonIgnore
 @Column(nullable = false)
 private boolean repeatOffender = false;
 
-@JsonIgnore
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-
-@JsonIgnore
-@OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-private List<IntegrityCase> integrityCases = new ArrayList<>();
-
-
 public StudentProfile() {
-this.createdAt = LocalDateTime.now();
 }
 
-/* getters and setters */
+@PrePersist
+protected void onCreate() {
+this.createdAt = LocalDateTime.now();
+}
 
 public Long getId() {
 return id;
@@ -102,10 +87,6 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
-public boolean getRepeatOffender() {
-return repeatOffender;
-}
-
 public boolean isRepeatOffender() {
 return repeatOffender;
 }
@@ -117,16 +98,5 @@ this.repeatOffender = repeatOffender;
 public LocalDateTime getCreatedAt() {
 return createdAt;
 }
-
-public List<IntegrityCase> getIntegrityCases() {
-return integrityCases;
-}
-
-
-public void setCreatedAt(LocalDateTime createdAt) {
-this.createdAt = createdAt;
-}
-
-
 
 }
