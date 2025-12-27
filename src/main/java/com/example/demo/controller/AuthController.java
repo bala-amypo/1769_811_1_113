@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import com.example.demo.dto.JwtResponse;
 import com.example.demo.dto.LoginRequest;
@@ -16,7 +17,7 @@ private final AuthService authService;
 public AuthController(AuthService authService) {
 this.authService = authService;
 }
-@PreAuthorize()
+@PreAuthorize("hasRole('ADMIN)")
 @PostMapping("/register")
 public void register(@RequestBody RegisterRequest request) {
 authService.register(request);
