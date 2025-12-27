@@ -14,9 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-private final Key key;
-private final long expiration;
+private Key key;
+private long expiration;
 
+/* ===============================
+   DEFAULT CONSTRUCTOR (Spring)
+   =============================== */
 public JwtTokenProvider() {
 this.key = Keys.hmacShaKeyFor(
 "MyVerySecretKeyForJwt123456789012345".getBytes()
@@ -24,6 +27,17 @@ this.key = Keys.hmacShaKeyFor(
 this.expiration = 60000L;
 }
 
+/* ===============================
+   REQUIRED FOR TEST CASES
+   =============================== */
+public JwtTokenProvider(String secret, long expiration) {
+this.key = Keys.hmacShaKeyFor(secret.getBytes());
+this.expiration = expiration;
+}
+
+/* ===============================
+   TOKEN GENERATION
+   =============================== */
 public String generateToken(
 Authentication authentication,
 Long userId,
