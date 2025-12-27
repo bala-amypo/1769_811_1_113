@@ -32,11 +32,11 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
 private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
-@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
 private LocalDateTime createdAt;
 
 /* Needed for mapping only */
