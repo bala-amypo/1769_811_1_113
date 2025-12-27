@@ -1,14 +1,3 @@
-package com.example.demo.controller;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.dto.ApiResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.JwtResponse;
-import com.example.demo.service.AuthService;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -20,24 +9,12 @@ this.authService = authService;
 }
 
 @PostMapping("/register")
-public ResponseEntity<ApiResponse> register(
-@RequestBody RegisterRequest registerRequest
-) {
-
-authService.register(registerRequest);
-
-return ResponseEntity.ok(
-new ApiResponse(true,"User registered successfully")
-);
+public void register(@RequestBody RegisterRequest request) {
+authService.register(request);
 }
 
 @PostMapping("/login")
-public ResponseEntity<JwtResponse> login(
-@RequestBody LoginRequest loginRequest
-) {
-
-JwtResponse response = authService.login(loginRequest);
-
-return ResponseEntity.ok(response);
+public JwtResponse login(@RequestBody LoginRequest request) {
+return authService.login(request);
 }
 }
