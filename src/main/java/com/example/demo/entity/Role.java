@@ -49,4 +49,3 @@ public void setUsers(Set<AppUser> users) {
 this.users = users;
 }
 }
-
