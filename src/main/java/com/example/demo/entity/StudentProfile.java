@@ -3,7 +3,7 @@ package com.example.demo.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,11 +13,6 @@ public class StudentProfile {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
-
-
-@ManyToOne
-@JoinColumn(name = "user_id")
-private AppUser user;
 
 @Column(nullable = false, unique = true)
 private String studentId;
@@ -30,36 +25,51 @@ private String email;
 
 private String program;
 
-@Column(nullable = false)
+@Column(name = "year_level", nullable = false)
 private Integer yearLevel;
-
-
 
 @Column(nullable = false)
 private boolean repeatOffender = false;
 
-
 @Column(nullable = false, updatable = false)
 private LocalDateTime createdAt;
 
-
-
+/* REQUIRED BY TESTS */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 private List<IntegrityCase> integrityCases = new ArrayList<>();
-
 
 public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 }
 
-/* getters and setters */
-
-public Long getId() {
-return id;
+public StudentProfile(
+String studentId,
+String name,
+String email,
+String program,
+Integer yearLevel
+) {
+this.studentId = studentId;
+this.name = name;
+this.email = email;
+this.program = program;
+this.yearLevel = yearLevel;
+this.repeatOffender = false;
+this.createdAt = LocalDateTime.now();
 }
 
+/* ===== REQUIRED SETTERS (TESTS USE THEM) ===== */
 public void setId(Long id) {
 this.id = id;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+this.createdAt = createdAt;
+}
+
+/* ===== GETTERS / SETTERS ===== */
+public Long getId() {
+return id;
 }
 
 public String getStudentId() {
@@ -121,12 +131,4 @@ return createdAt;
 public List<IntegrityCase> getIntegrityCases() {
 return integrityCases;
 }
-
-
-public void setCreatedAt(LocalDateTime createdAt) {
-this.createdAt = createdAt;
-}
-
-
-
 }
