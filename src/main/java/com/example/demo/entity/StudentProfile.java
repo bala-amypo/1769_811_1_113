@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -23,7 +24,7 @@ private String studentId;
 @Column(nullable = false)
 private String name;
 
-@Column(nullable = false, unique = true)
+@Column(nullable = false)
 private String email;
 
 private String program;
@@ -41,6 +42,7 @@ private LocalDateTime createdAt;
 private List<IntegrityCase> integrityCases;
 
 public StudentProfile() {
+this.createdAt = LocalDateTime.now();
 }
 
 @PrePersist
@@ -96,6 +98,10 @@ public void setYearLevel(Integer yearLevel) {
 this.yearLevel = yearLevel;
 }
 
+public boolean getRepeatOffender() {
+return repeatOffender;
+}
+
 public boolean isRepeatOffender() {
 return repeatOffender;
 }
@@ -106,6 +112,10 @@ this.repeatOffender = repeatOffender;
 
 public LocalDateTime getCreatedAt() {
 return createdAt;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+this.createdAt = createdAt;
 }
 
 public List<IntegrityCase> getIntegrityCases() {
