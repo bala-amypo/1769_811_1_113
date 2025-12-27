@@ -32,11 +32,11 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private LocalDateTime createdAt;
 
 /* Needed for mapping only */
@@ -45,7 +45,7 @@ private LocalDateTime createdAt;
 @JsonIgnore
 private AppUser user;
 
-
+/* Needed for JPA + tests */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
@@ -54,9 +54,14 @@ public StudentProfile() {
 this.createdAt = LocalDateTime.now();
 }
 
+@PrePersist
+protected void onCreate() {
+if (this.createdAt == null) {
+this.createdAt = LocalDateTime.now();
+}
+}
 
-
-
+/* getters & setters unchanged */
 
 public Long getId() { return id; }
 public void setId(Long id) { this.id = id; }
