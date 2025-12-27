@@ -15,9 +15,6 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@ManyToOne
-@JoinColumn(name = "user_id")
-private AppUser user;
 
 @Column(nullable = false, unique = true)
 private String studentId;
