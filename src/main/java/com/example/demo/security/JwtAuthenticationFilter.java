@@ -1,31 +1,28 @@
 package com.example.demo.security;
 
-import java.io.IOException;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import io.jsonwebtoken.Claims;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 private final JwtTokenProvider jwtTokenProvider;
-private final CustomUserDetailsService userDetailsService;
 
-public JwtAuthenticationFilter(
-JwtTokenProvider jwtTokenProvider,
-CustomUserDetailsService userDetailsService
-) {
+public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
 this.jwtTokenProvider = jwtTokenProvider;
-this.userDetailsService = userDetailsService;
 }
 
 @Override
@@ -37,33 +34,32 @@ FilterChain filterChain
 
 String header = request.getHeader("Authorization");
 
-if(header != null && header.startsWith("Bearer ")) {
+if (header != null && header.startsWith("Bearer ")) {
 
 String token = header.substring(7);
 
-if(jwtTokenProvider.validateToken(token)) {
+if (jwtTokenProvider.validateToken(token)) {
 
-String email = jwtTokenProvider.getUsernameFromToken(token);
+Claims claims = jwtTokenProvider.getClaims(token);
+String email = claims.getSubject();
+String role = claims.get("role", String.class);
 
-UserDetails userDetails =
-userDetailsService.loadUserByUsername(email);
+SimpleGrantedAuthority authority =
+new SimpleGrantedAuthority("ROLE_" + role);
 
-UsernamePasswordAuthenticationToken authentication =
+UsernamePasswordAuthenticationToken auth =
 new UsernamePasswordAuthenticationToken(
-userDetails,
+email,
 null,
-userDetails.getAuthorities()
+List.of(authority)
 );
 
-authentication.setDetails(
-new WebAuthenticationDetailsSource().buildDetails(request)
-);
-
-SecurityContextHolder.getContext()
-.setAuthentication(authentication);
+SecurityContextHolder
+.getContext()
+.setAuthentication(auth);
 }
 }
 
-filterChain.doFilter(request,response);
+filterChain.doFilter(request, response);
 }
 }

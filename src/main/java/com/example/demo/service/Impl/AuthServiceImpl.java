@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +16,9 @@ import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.service.AuthService;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl {
 
 private final AppUserRepository appUserRepository;
 private final RoleRepository roleRepository;
@@ -41,63 +40,52 @@ this.authenticationManager = authenticationManager;
 this.jwtTokenProvider = jwtTokenProvider;
 }
 
-@Override
-public void register(RegisterRequest registerRequest) {
+public void register(RegisterRequest request) {
 
-if(appUserRepository.existsByEmail(registerRequest.getEmail())) {
+if (appUserRepository.existsByEmail(request.getEmail())) {
 throw new IllegalArgumentException("Email already exists");
 }
 
-Role role = roleRepository
-.findByName(registerRequest.getRole())
-.orElseThrow(() ->
-new IllegalArgumentException("Invalid role: " + registerRequest.getRole())
-);
+Role role = roleRepository.findByName(request.getRole())
+.orElseThrow(() -> new IllegalArgumentException("Invalid role"));
 
-AppUser user = new AppUser(
-registerRequest.getFullName(),
-registerRequest.getEmail(),
-passwordEncoder.encode(registerRequest.getPassword())
-);
-
-user.setRoles(Set.of(role));
+AppUser user = new AppUser();
+user.setEmail(request.getEmail());
+user.setPassword(passwordEncoder.encode(request.getPassword()));
+user.setFullName(request.getFullName());
+user.getRoles().add(role);
 
 appUserRepository.save(user);
 }
 
-@Override
-public JwtResponse login(LoginRequest loginRequest) {
+public JwtResponse login(LoginRequest request) {
 
-Authentication authentication = authenticationManager.authenticate(
+Authentication authentication =
+authenticationManager.authenticate(
 new UsernamePasswordAuthenticationToken(
-loginRequest.getEmail(),
-loginRequest.getPassword()
+request.getEmail(),
+request.getPassword()
 )
 );
 
-AppUser user = appUserRepository
-.findByEmail(loginRequest.getEmail())
-.orElseThrow(() ->
-new IllegalArgumentException("User not found")
-);
+AppUser user = appUserRepository.findByEmail(request.getEmail())
+.orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-String primaryRole = user.getRoles()
-.iterator()
-.next()
-.getName();
+String roleName =
+user.getRoles().iterator().next().getName();
 
 String token = jwtTokenProvider.generateToken(
 authentication,
 user.getId(),
 user.getEmail(),
-primaryRole
+roleName
 );
 
 return new JwtResponse(
 token,
 user.getId(),
 user.getEmail(),
-primaryRole
+roleName
 );
 }
 }
