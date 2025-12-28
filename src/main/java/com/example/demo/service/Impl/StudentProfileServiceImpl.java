@@ -12,8 +12,6 @@ import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 
-
-
 @Service
 @Transactional
 public class StudentProfileServiceImpl
@@ -21,20 +19,6 @@ implements StudentProfileService {
 
 private final StudentProfileRepository studentRepo;
 private final AppUserRepository userRepo;
-
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-IntegrityCaseRepository integrityCaseRepo,
-RepeatOffenderRecordRepository repeatOffenderRecordRepo,
-RepeatOffenderCalculator calculator
-) {
-this.studentRepo = studentRepo;
-this.userRepo = null; // not used in tests
-this.integrityCaseRepo = integrityCaseRepo;
-this.repeatOffenderRecordRepo = repeatOffenderRecordRepo;
-this.calculator = calculator;
-}
-
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
@@ -78,11 +62,17 @@ new ResourceNotFoundException("Student not found")
 public List<StudentProfile> getAllStudents() {
 return studentRepo.findAll();
 }
-
 @Override
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-StudentProfile student = getStudentById(studentId);
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new ResourceNotFoundException("Student not found")
+);
+
 student.setRepeatOffender(true);
+
 return studentRepo.save(student);
 }
 
