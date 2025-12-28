@@ -55,7 +55,8 @@ public class AuthServiceImpl implements AuthService {
         AppUser user = new AppUser();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setName(request.getFullName());
+        user.setFullName(request.getFullName());
+
 
         String roleName = request.getRole();
         Role role = roleRepo.findByName(roleName)
