@@ -1,78 +1,90 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.Impl;
 
-import com.example.demo.dto.JwtResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.AuthRequestDto;
+import com.example.demo.dto.AuthResponseDto;
+import com.example.demo.dto.RegisterRequestDto;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.JwtTokenProvider; // ✅ Using your file name
 import com.example.demo.service.AuthService;
-
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-@Transactional
 public class AuthServiceImpl implements AuthService {
 
-    private final AppUserRepository appUserRepository;
-    private final RoleRepository roleRepository;
+    private final AppUserRepository userRepo;
+    private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-
-    // NOTE: AuthenticationManager removed to prevent StackOverflowError (Exit Code 137)
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider; // ✅ Renamed
 
     public AuthServiceImpl(
-            AppUserRepository appUserRepository,
-            RoleRepository roleRepository,
+            AppUserRepository userRepo,
+            RoleRepository roleRepo,
             PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider
+            AuthenticationManager authenticationManager,
+            JwtTokenProvider jwtTokenProvider // ✅ Injected
     ) {
-        this.appUserRepository = appUserRepository;
-        this.roleRepository = roleRepository;
+        this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public void register(RegisterRequest request) {
-        if (appUserRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
-        }
+    public AuthResponseDto login(AuthRequestDto request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
 
-        Role role = roleRepository.findByName(request.getRole())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid role"));
+        AppUser user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AppUser user = new AppUser();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFullName(request.getFullName());
-        user.getRoles().add(role);
+        Map<String, Object> claims = new HashMap<>();
+        // Now this matches the signature in Step 1
+        String token = jwtTokenProvider.generateToken(claims, user.getEmail());
 
-        appUserRepository.save(user);
+        return new AuthResponseDto(token);
     }
 
     @Override
-    public JwtResponse login(LoginRequest request) {
-        // 1. Check if user exists (Fixed variable name: appUserRepository)
-        AppUser user = appUserRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
-
-        // 2. Check Password
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+    public void register(RegisterRequestDto request) {
+        if (userRepo.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
         }
 
-        // 3. Generate Token (Fixed variable name: jwtTokenProvider)
-        String token = jwtTokenProvider.generateToken(user.getEmail());
+        AppUser user = new AppUser();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // 4. Get Role
-        String roleName = user.getRoles().isEmpty() ? "USER" : user.getRoles().iterator().next().getName();
+        String roleName = request.getRole();
+        if (roleName == null || roleName.isEmpty()) {
+            roleName = "STUDENT";
+        }
+        String finalRoleName = roleName.toUpperCase();
 
-        // 5. Return JwtResponse
-        return new JwtResponse(token, user.getId(), user.getEmail(), roleName);
+        Role role = roleRepo.findByName(finalRoleName)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName(finalRoleName);
+                    return roleRepo.save(newRole);
+                });
+
+        user.setRoles(Collections.singleton(role));
+        userRepo.save(user);
     }
 }
