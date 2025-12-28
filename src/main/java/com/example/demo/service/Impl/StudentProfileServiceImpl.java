@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +24,13 @@ implements StudentProfileService {
 private final StudentProfileRepository studentRepo;
 private final AppUserRepository userRepo;
 
-/* extra fields only for test constructor */
+/* test-only fields */
 private IntegrityCaseRepository integrityCaseRepo;
 private RepeatOffenderRecordRepository repeatRepo;
 private RepeatOffenderCalculator calculator;
 
-/* ✅ ORIGINAL WORKING CONSTRUCTOR */
+/* ✅ THIS IS THE SPRING CONSTRUCTOR */
+@Autowired
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
 AppUserRepository userRepo
@@ -37,7 +39,7 @@ this.studentRepo = studentRepo;
 this.userRepo = userRepo;
 }
 
-/* ✅ TEST-REQUIRED CONSTRUCTOR */
+/* ✅ THIS IS THE TEST CONSTRUCTOR */
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
 IntegrityCaseRepository integrityCaseRepo,
@@ -45,7 +47,7 @@ RepeatOffenderRecordRepository repeatRepo,
 RepeatOffenderCalculator calculator
 ) {
 this.studentRepo = studentRepo;
-this.userRepo = null;   // not used in tests
+this.userRepo = null;
 this.integrityCaseRepo = integrityCaseRepo;
 this.repeatRepo = repeatRepo;
 this.calculator = calculator;
@@ -54,11 +56,12 @@ this.calculator = calculator;
 @Override
 public StudentProfile createStudent(StudentProfile student) {
 
-AppUser user = userRepo != null
-? userRepo.findById(1L).orElse(null)
-: null;
-
+if (userRepo != null) {
+AppUser user = userRepo.findById(1L)
+.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 student.setUser(user);
+}
+
 student.setRepeatOffender(false);
 return studentRepo.save(student);
 }
@@ -78,8 +81,8 @@ return studentRepo.findAll();
 
 @Override
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-StudentProfile s = getStudentById(studentId);
-s.setRepeatOffender(true);
-return studentRepo.save(s);
+StudentProfile student = getStudentById(studentId);
+student.setRepeatOffender(true);
+return studentRepo.save(student);
 }
 }
