@@ -3,19 +3,13 @@ package com.example.demo.security;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
-
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.*;
 
 import java.util.stream.Collectors;
 
-@Service
-public class CustomUserDetailsService
-implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
 private final AppUserRepository userRepository;
 
@@ -24,13 +18,9 @@ this.userRepository = userRepository;
 }
 
 @Override
-public UserDetails loadUserByUsername(String email)
-throws UsernameNotFoundException {
-
+public UserDetails loadUserByUsername(String email) {
 AppUser user = userRepository.findByEmail(email)
-.orElseThrow(() ->
-new UsernameNotFoundException("User not found: " + email)
-);
+.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 return new User(
 user.getEmail(),
