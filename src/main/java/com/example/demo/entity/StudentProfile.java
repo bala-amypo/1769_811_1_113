@@ -39,29 +39,24 @@ private boolean repeatOffender = false;
 @JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private LocalDateTime createdAt;
 
-/* Needed for mapping only */
 @ManyToOne
 @JoinColumn(name = "user_id")
 @JsonIgnore
 private AppUser user;
 
-/* Needed for JPA + tests */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
-this.createdAt = LocalDateTime.now();
 }
 
 @PrePersist
 protected void onCreate() {
-if (this.createdAt == null) {
 this.createdAt = LocalDateTime.now();
 }
-}
 
-/* getters & setters unchanged */
+/* getters & setters */
 
 public Long getId() { return id; }
 public void setId(Long id) { this.id = id; }
@@ -81,16 +76,16 @@ public void setProgram(String program) { this.program = program; }
 public Integer getYearLevel() { return yearLevel; }
 public void setYearLevel(Integer yearLevel) { this.yearLevel = yearLevel; }
 
-public boolean getRepeatOffender() { return repeatOffender; }
 public boolean isRepeatOffender() { return repeatOffender; }
 public void setRepeatOffender(boolean repeatOffender) { this.repeatOffender = repeatOffender; }
 
 public LocalDateTime getCreatedAt() { return createdAt; }
-public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
 public AppUser getUser() { return user; }
 public void setUser(AppUser user) { this.user = user; }
 
 public List<IntegrityCase> getIntegrityCases() { return integrityCases; }
-public void setIntegrityCases(List<IntegrityCase> integrityCases) { this.integrityCases = integrityCases; }
+public void setIntegrityCases(List<IntegrityCase> integrityCases) {
+this.integrityCases = integrityCases;
+}
 }
