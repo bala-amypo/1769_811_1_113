@@ -28,7 +28,7 @@ this.integrityCaseRepository = integrityCaseRepository;
 this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
 this.calculator = calculator;
 }
-
+}
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
