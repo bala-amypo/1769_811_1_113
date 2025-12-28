@@ -32,13 +32,4 @@ public List<StudentProfile> getAll() {
 return service.getAllStudents();
 }
 
-@PutMapping("/{id}/repeat-status")
-public ResponseEntity<StudentProfile> updateRepeatOffenderStatus(
-@PathVariable Long id
-) {
-StudentProfile updated =
-studentProfileService.updateRepeatOffenderStatus(id);
-
-return ResponseEntity.ok(updated);
-}
 }
