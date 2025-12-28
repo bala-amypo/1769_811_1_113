@@ -6,7 +6,7 @@ private String email;
 private String password;
 private String role;
 private String fullName; 
-private String name;  // 🔴 REQUIRED by AuthServiceImpl
+
 
 public String getEmail() {
 return email;
@@ -40,6 +40,5 @@ public void setFullName(String fullName) {
 this.fullName = fullName;
 }
 
-public String getName() { return name; }
-public void setName(String name) { this.name = name; }
+
 }
