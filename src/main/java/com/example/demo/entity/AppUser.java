@@ -18,6 +18,14 @@ public class AppUser {
     private String password;
 
     private String fullName;
+    public Boolean getEnabled() {
+return enabled;
+}
+
+public void setEnabled(Boolean enabled) {
+this.enabled = enabled;
+}
+
 
     // EAGER fetch needed for Spring Security to load roles immediately
     @ManyToMany(fetch = FetchType.EAGER)
