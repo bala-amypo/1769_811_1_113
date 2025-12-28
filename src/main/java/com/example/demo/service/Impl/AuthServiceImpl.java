@@ -1,92 +1,91 @@
-package com.example.demo.service.Impl;
+package com.example.demo.service.impl;
 
-import com.example.demo.dto.AuthRequestDto;
-import com.example.demo.dto.AuthResponseDto;
-import com.example.demo.dto.RegisterRequestDto;
+import com.example.demo.dto.JwtResponse;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.security.JwtUtil;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.transaction.annotation.Transactional; // <--- 1. ADD THIS IMPORT
 
 @Service
+@Transactional // <--- 2. ADD THIS ANNOTATION
 public class AuthServiceImpl implements AuthService {
 
-    private final AppUserRepository userRepo;
-    private final RoleRepository roleRepo; // ✅ Added to handle your Roles
+    private final AppUserRepository appUserRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(
-            AppUserRepository userRepo,
-            RoleRepository roleRepo,
+            AppUserRepository appUserRepository,
+            RoleRepository roleRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            JwtUtil jwtUtil
+            JwtTokenProvider jwtTokenProvider
     ) {
-        this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
+        this.appUserRepository = appUserRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
-    public AuthResponseDto login(AuthRequestDto request) {
-        authenticationManager.authenticate(
+    public void register(RegisterRequest request) {
+        if (appUserRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
+        Role role = roleRepository.findByName(request.getRole())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role"));
+
+        AppUser user = new AppUser();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFullName(request.getFullName());
+        user.getRoles().add(role);
+
+        appUserRepository.save(user);
+    }
+
+    @Override
+    public JwtResponse login(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
 
-        AppUser user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        AppUser user = appUserRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Map<String, Object> claims = new HashMap<>();
-        String token = jwtUtil.generateToken(claims, user.getEmail());
+        // This line was likely crashing because the DB session was closed
+        String role = user.getRoles().iterator().next().getName();
 
-        return new AuthResponseDto(token);
-    }
+        String token = jwtTokenProvider.generateToken(
+                authentication,
+                user.getId(),
+                user.getEmail(),
+                role
+        );
 
-    @Override
-    public void register(RegisterRequestDto request) {
-        if (userRepo.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        AppUser user = new AppUser();
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        // ✅ LOGIC TO HANDLE ROLES
-        String roleName = request.getRole();
-        if (roleName == null || roleName.isEmpty()) {
-            roleName = "STUDENT";
-        }
-        
-        String finalRoleName = roleName.toUpperCase();
-
-        Role role = roleRepo.findByName(finalRoleName)
-                .orElseGet(() -> {
-                    Role newRole = new Role();
-                    newRole.setName(finalRoleName);
-                    return roleRepo.save(newRole);
-                });
-
-        user.setRoles(Collections.singleton(role));
-
-        userRepo.save(user);
+        return new JwtResponse(
+                token,
+                user.getId(),
+                user.getEmail(),
+                role
+        );
     }
 }
