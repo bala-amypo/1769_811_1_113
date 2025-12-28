@@ -49,7 +49,10 @@ private AppUser user;
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
+this.createdAt = LocalDateTime.now();
+this.repeatOffender = false;
 }
+
 
 @PrePersist
 protected void onCreate() {
