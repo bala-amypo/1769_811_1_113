@@ -1,30 +1,26 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.JwtResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.*;
 import com.example.demo.service.AuthService;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthService authService;
+private final AuthService service;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+public AuthController(AuthService service) {
+this.service = service;
+}
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest req) {
-        return ResponseEntity.ok(authService.register(req));
-    }
+@PostMapping("/register")
+public String register(@RequestBody RegisterRequest req) {
+return service.register(req);
+}
 
-    @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest req) {
-        return ResponseEntity.ok(authService.login(req));
-    }
+@PostMapping("/login")
+public JwtResponse login(@RequestBody LoginRequest req) {
+return service.login(req);
+}
 }
