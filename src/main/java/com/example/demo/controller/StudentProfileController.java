@@ -2,44 +2,39 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.service.StudentProfileService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@Tag(name = "Student Profiles")
 public class StudentProfileController {
 
-    private final StudentProfileService service;
+private final StudentProfileService studentProfileService;
 
-    public StudentProfileController(StudentProfileService service) { this.service = service; }
+public StudentProfileController(StudentProfileService studentProfileService) {
+this.studentProfileService = studentProfileService;
+}
 
-    @PostMapping
-    public ResponseEntity<StudentProfile> createStudentProfile(@RequestBody StudentProfile dto) {
-        return new ResponseEntity<>(service.createStudent(dto), HttpStatus.CREATED);
-    }
+@PostMapping
+public StudentProfile createStudent(@RequestBody StudentProfile student) {
+return studentProfileService.createStudent(student);
+}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<StudentProfile> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getStudentById(id));
-    }
+@GetMapping("/{id}")
+public StudentProfile getStudentById(@PathVariable Long id) {
+return studentProfileService.getStudentById(id);
+}
 
-    @GetMapping
-    public ResponseEntity<List<StudentProfile>> listAllStudents() {
-        return ResponseEntity.ok(service.getAllStudents());
-    }
+@GetMapping
+public List<StudentProfile> getAllStudents() {
+return studentProfileService.getAllStudents();
+}
 
-    @PutMapping("/{studentId}/repeat-status")
-    public ResponseEntity<StudentProfile> updateRepeatOffenderStatus(@PathVariable Long studentId) {
-        return ResponseEntity.ok(service.updateRepeatOffenderStatus(studentId));
-    }
-
-    // New Endpoint from Image Description
-    @GetMapping("/lookup/{studentId}")
-    public ResponseEntity<StudentProfile> findByStudentIdentifier(@PathVariable String studentId) {
-        return service.findByStudentId(studentId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+@PutMapping("/{studentId}/repeat-offender-status")
+public StudentProfile updateRepeatOffenderStatus(@PathVariable Long studentId) {
+return studentProfileService.updateRepeatOffenderStatus(studentId);
+}
 }

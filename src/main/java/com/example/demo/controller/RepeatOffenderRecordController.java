@@ -2,32 +2,41 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.service.RepeatOffenderRecordService;
-import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/repeat-offenders")
+@Tag(name = "Repeat Offenders")
 public class RepeatOffenderRecordController {
 
-    private final RepeatOffenderRecordService service;
+private final RepeatOffenderRecordService repeatOffenderRecordService;
 
-    public RepeatOffenderRecordController(RepeatOffenderRecordService service) { this.service = service; }
+public RepeatOffenderRecordController(
+RepeatOffenderRecordService repeatOffenderRecordService
+) {
+this.repeatOffenderRecordService = repeatOffenderRecordService;
+}
 
-    @PostMapping("/refresh/{studentId}")
-    public ResponseEntity<RepeatOffenderRecord> recalculateRepeatOffenderStatus(@PathVariable Long studentId) {
-        return ResponseEntity.ok(service.refreshRepeatOffenderData(studentId));
-    }
+@PostMapping("/refresh/{studentId}")
+public RepeatOffenderRecord refreshRepeatOffenderData(
+@PathVariable Long studentId
+) {
+return repeatOffenderRecordService.refreshRepeatOffenderData(studentId);
+}
 
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<RepeatOffenderRecord> getRecordForStudent(@PathVariable Long studentId) {
-        return service.getRecordByStudent(studentId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+@GetMapping("/student/{studentId}")
+public Optional<RepeatOffenderRecord> getRecordByStudent(
+@PathVariable Long studentId
+) {
+return repeatOffenderRecordService.getRecordByStudent(studentId);
+}
 
-    @GetMapping
-    public ResponseEntity<List<RepeatOffenderRecord>> listAllRepeatOffenders() {
-        return ResponseEntity.ok(service.getAllRepeatOffenders());
-    }
+@GetMapping
+public List<RepeatOffenderRecord> getAllRepeatOffenders() {
+return repeatOffenderRecordService.getAllRepeatOffenders();
+}
 }
