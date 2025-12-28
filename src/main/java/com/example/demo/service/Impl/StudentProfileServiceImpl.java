@@ -21,19 +21,19 @@ public class StudentProfileServiceImpl
 implements StudentProfileService {
 
 private final StudentProfileRepository studentRepo;
-private final IntegrityCaseRepository integrityCaseRepo;
-private final RepeatOffenderRecordRepository repeatRecordRepo;
+private final IntegrityCaseRepository caseRepo;
+private final RepeatOffenderRecordRepository repeatOffenderRecordRepo;
 private final RepeatOffenderCalculator calculator;
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
-IntegrityCaseRepository integrityCaseRepo,
-RepeatOffenderRecordRepository repeatRecordRepo,
+IntegrityCaseRepository caseRepo,
+RepeatOffenderRecordRepository repeatOffenderRecordRepo,
 RepeatOffenderCalculator calculator
 ) {
 this.studentRepo = studentRepo;
-this.integrityCaseRepo = integrityCaseRepo;
-this.repeatRecordRepo = repeatRecordRepo;
+this.caseRepo = caseRepo;
+this.repeatOffenderRecordRepo = repeatOffenderRecordRepo;
 this.calculator = calculator;
 }
 
@@ -62,19 +62,27 @@ public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 StudentProfile student =
 studentRepo.findById(studentId)
 .orElseThrow(() ->
-new ResourceNotFoundException("Student not found")
+new IllegalArgumentException("Student not found")
 );
 
+
 List<IntegrityCase> cases =
-integrityCaseRepo.findByStudentProfile(student);
+caseRepo.findByStudentProfile(student);
 
-RepeatOffenderRecord record =
-calculator.computeRepeatOffenderRecord(student, cases);
-
-student.setRepeatOffender(cases.size() >= 2);
+boolean repeat = cases.size() >= 2;
+student.setRepeatOffender(repeat);
 
 studentRepo.save(student);
-repeatRecordRepo.save(record);
+
+
+repeatOffenderRecordRepo.findByStudentProfile(student)
+.orElseGet(() -> {
+RepeatOffenderRecord r = new RepeatOffenderRecord();
+r.setStudentProfile(student);
+r.setTotalCases(cases.size());
+r.setFlagSeverity(repeat ? "MEDIUM" : "LOW");
+return repeatOffenderRecordRepo.save(r);
+});
 
 return student;
 }
