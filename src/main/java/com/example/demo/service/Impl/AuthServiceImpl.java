@@ -58,34 +58,24 @@ public class AuthServiceImpl implements AuthService {
 
         appUserRepository.save(user);
     }
-
-    @Override
+@Override
     public JwtResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        // 1. Check if user exists
+        AppUser user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
 
-        AppUser user = appUserRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        // 2. Check Password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
 
-        // This line was likely crashing because the DB session was closed
-        String role = user.getRoles().iterator().next().getName();
+        // 3. Generate Token
+        String token = tokenProvider.generateToken(user.getEmail());
 
-        String token = jwtTokenProvider.generateToken(
-                authentication,
-                user.getId(),
-                user.getEmail(),
-                role
-        );
+        // 4. Get Role (Handle case where user has no role)
+        String roleName = user.getRoles().isEmpty() ? "USER" : user.getRoles().iterator().next().getName();
 
-        return new JwtResponse(
-                token,
-                user.getId(),
-                user.getEmail(),
-                role
-        );
+        // 5. Return JwtResponse
+        return new JwtResponse(token, user.getId(), user.getEmail(), roleName);
     }
 }
