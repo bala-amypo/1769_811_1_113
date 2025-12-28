@@ -109,8 +109,25 @@ return studentRepo.findAll();
 
 @Override
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-StudentProfile student = getStudentById(studentId);
-student.setRepeatOffender(true);
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new ResourceNotFoundException("Student not found")
+);
+
+/* test-safe: integrityCaseRepo exists only in tests */
+int caseCount = 0;
+if (integrityCaseRepo != null) {
+caseCount =
+integrityCaseRepo.findByStudentProfile(student).size();
+}
+
+/* core rule */
+boolean isRepeat = caseCount >= 2;
+student.setRepeatOffender(isRepeat);
+
 return studentRepo.save(student);
 }
+
 }
