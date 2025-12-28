@@ -39,6 +39,10 @@ private LocalDateTime createdAt = LocalDateTime.now();
 @OneToMany(mappedBy = "integrityCase")
 private List<PenaltyAction> penalties = new ArrayList<>();
 
+ public void setCreatedAt(LocalDateTime createdAt) {
+this.createdAt = createdAt;
+}
+
 public IntegrityCase() {}
 
 public Long getId() { return id; }

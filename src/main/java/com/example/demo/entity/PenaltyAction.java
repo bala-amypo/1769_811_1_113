@@ -40,6 +40,9 @@ public void setPenaltyType(String penaltyType) { this.penaltyType = penaltyType;
 
 public String getDetails() { return details; }
 public void setDetails(String details) { this.details = details; }
+public void setIssuedAt(LocalDateTime issuedAt) {
+this.issuedAt = issuedAt;
+}
 
 public String getIssuedBy() { return issuedBy; }
 public void setIssuedBy(String issuedBy) { this.issuedBy = issuedBy; }

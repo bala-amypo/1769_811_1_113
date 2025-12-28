@@ -31,6 +31,9 @@ public EvidenceRecord() {}
 
 public Long getId() { return id; }
 public void setId(Long id) { this.id = id; }
+public void setSubmittedAt(LocalDateTime submittedAt) {
+this.submittedAt = submittedAt;
+}
 
 public IntegrityCase getIntegrityCase() { return integrityCase; }
 public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }

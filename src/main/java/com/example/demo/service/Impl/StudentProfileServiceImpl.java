@@ -8,25 +8,27 @@ import com.example.demo.util.RepeatOffenderCalculator;
 import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
-public class StudentProfileServiceImpl implements StudentProfileService {
+public class RepeatOffenderRecordServiceImpl
+implements RepeatOffenderRecordService {
 
-private final StudentProfileRepository studentRepo;
-private final IntegrityCaseRepository caseRepo;
-private final RepeatOffenderRecordRepository recordRepo;
+private final StudentProfileRepository studentProfileRepository;
+private final IntegrityCaseRepository integrityCaseRepository;
+private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
 private final RepeatOffenderCalculator calculator;
 
-/* constructor order EXACT as test */
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-IntegrityCaseRepository caseRepo,
-RepeatOffenderRecordRepository recordRepo,
+/* 🔴 THIS CONSTRUCTOR MUST EXIST EXACTLY */
+public RepeatOffenderRecordServiceImpl(
+StudentProfileRepository studentProfileRepository,
+IntegrityCaseRepository integrityCaseRepository,
+RepeatOffenderRecordRepository repeatOffenderRecordRepository,
 RepeatOffenderCalculator calculator
 ) {
-this.studentRepo = studentRepo;
-this.caseRepo = caseRepo;
-this.recordRepo = recordRepo;
+this.studentProfileRepository = studentProfileRepository;
+this.integrityCaseRepository = integrityCaseRepository;
+this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
 this.calculator = calculator;
 }
+
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
