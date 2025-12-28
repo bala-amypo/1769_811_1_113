@@ -1,62 +1,45 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
+import com.example.demo.entity.StudentProfile;
+import com.example.demo.service.StudentProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.entity.StudentProfile;
-import com.example.demo.service.StudentProfileService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
 public class StudentProfileController {
 
-private final StudentProfileService studentProfileService;
+    private final StudentProfileService service;
 
-public StudentProfileController(StudentProfileService studentProfileService) {
-this.studentProfileService = studentProfileService;
-}
+    public StudentProfileController(StudentProfileService service) { this.service = service; }
 
-/* ================= CREATE STUDENT ================= */
-@PostMapping
-public ResponseEntity<StudentProfile> createStudent(
-@RequestBody StudentProfile student
-) {
-StudentProfile created =
-studentProfileService.createStudent(student);
+    @PostMapping
+    public ResponseEntity<StudentProfile> createStudentProfile(@RequestBody StudentProfile dto) {
+        return new ResponseEntity<>(service.createStudent(dto), HttpStatus.CREATED);
+    }
 
-return new ResponseEntity<>(created, HttpStatus.CREATED);
-}
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentProfile> getStudentById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getStudentById(id));
+    }
 
-/* ================= GET BY ID ================= */
-@GetMapping("/{id}")
-public ResponseEntity<StudentProfile> getStudentById(
-@PathVariable Long id
-) {
-StudentProfile student =
-studentProfileService.getStudentById(id);
+    @GetMapping
+    public ResponseEntity<List<StudentProfile>> listAllStudents() {
+        return ResponseEntity.ok(service.getAllStudents());
+    }
 
-return ResponseEntity.ok(student);
-}
+    @PutMapping("/{studentId}/repeat-status")
+    public ResponseEntity<StudentProfile> updateRepeatOffenderStatus(@PathVariable Long studentId) {
+        return ResponseEntity.ok(service.updateRepeatOffenderStatus(studentId));
+    }
 
-/* ================= GET ALL ================= */
-@GetMapping
-public ResponseEntity<List<StudentProfile>> getAllStudents() {
-return ResponseEntity.ok(
-studentProfileService.getAllStudents()
-);
-}
-
-/* ================= UPDATE REPEAT OFFENDER ================= */
-@PutMapping("/{id}/repeat-status")
-public ResponseEntity<StudentProfile> updateRepeatOffenderStatus(
-@PathVariable Long id
-) {
-StudentProfile updated =
-studentProfileService.updateRepeatOffenderStatus(id);
-
-return ResponseEntity.ok(updated);
-}
+    // New Endpoint from Image Description
+    @GetMapping("/lookup/{studentId}")
+    public ResponseEntity<StudentProfile> findByStudentIdentifier(@PathVariable String studentId) {
+        return service.findByStudentId(studentId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

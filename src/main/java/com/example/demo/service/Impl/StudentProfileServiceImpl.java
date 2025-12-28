@@ -1,131 +1,53 @@
 package com.example.demo.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
-import com.example.demo.util.RepeatOffenderCalculator;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional
-public class StudentProfileServiceImpl
-implements StudentProfileService {
+public class StudentProfileServiceImpl implements StudentProfileService {
 
-private final StudentProfileRepository studentRepo;
-private final AppUserRepository userRepo;
+    private final StudentProfileRepository studentRepo;
+    private final IntegrityCaseRepository caseRepo;
 
-/* test-only dependencies */
-@SuppressWarnings("unused")
-private IntegrityCaseRepository integrityCaseRepo;
-@SuppressWarnings("unused")
-private RepeatOffenderRecordRepository repeatRepo;
-@SuppressWarnings("unused")
-private RepeatOffenderCalculator calculator;
+    public StudentProfileServiceImpl(StudentProfileRepository studentRepo, IntegrityCaseRepository caseRepo) {
+        this.studentRepo = studentRepo;
+        this.caseRepo = caseRepo;
+    }
 
-/* ================= SPRING RUNTIME CONSTRUCTOR ================= */
-@Autowired
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-AppUserRepository userRepo
-) {
-this.studentRepo = studentRepo;
-this.userRepo = userRepo;
-}
+    @Override
+    public StudentProfile createStudent(StudentProfile dto) {
+        return studentRepo.save(dto);
+    }
 
-/* ================= TEST CONSTRUCTOR (4 PARAMS) ================= */
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-IntegrityCaseRepository integrityCaseRepo,
-RepeatOffenderRecordRepository repeatRepo,
-RepeatOffenderCalculator calculator
-) {
-this.studentRepo = studentRepo;
-this.userRepo = null; // not used in tests
-this.integrityCaseRepo = integrityCaseRepo;
-this.repeatRepo = repeatRepo;
-this.calculator = calculator;
-}
+    @Override
+    public StudentProfile getStudentById(Long id) {
+        return studentRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+    }
 
-/* ================= TEST CONSTRUCTOR (5 PARAMS) ================= */
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-AppUserRepository userRepo,
-IntegrityCaseRepository integrityCaseRepo,
-RepeatOffenderRecordRepository repeatRepo,
-RepeatOffenderCalculator calculator
-) {
-this.studentRepo = studentRepo;
-this.userRepo = userRepo;
-this.integrityCaseRepo = integrityCaseRepo;
-this.repeatRepo = repeatRepo;
-this.calculator = calculator;
-}
+    @Override
+    public List<StudentProfile> getAllStudents() {
+        return studentRepo.findAll();
+    }
 
-@Override
-public StudentProfile createStudent(StudentProfile student) {
+    @Override
+    public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+        StudentProfile student = getStudentById(studentId);
+        List<IntegrityCase> cases = caseRepo.findByStudentProfile(student);
+        // Rule: >= 2 cases implies repeat offender
+        boolean isRepeat = cases.size() >= 2;
+        student.setRepeatOffender(isRepeat);
+        return studentRepo.save(student);
+    }
 
-if (studentRepo.existsByStudentId(student.getStudentId())) {
-throw new IllegalArgumentException("Student ID already exists");
-}
-
-if (studentRepo.existsByEmail(student.getEmail())) {
-throw new IllegalArgumentException("Email already exists");
-}
-
-
-
-
-student.setRepeatOffender(false); // REQUIRED BY TEST
-return studentRepo.save(student);
-}
-
-
-
-
-
-@Override
-public StudentProfile getStudentById(Long id) {
-return studentRepo.findById(id)
-.orElseThrow(() ->
-new ResourceNotFoundException("Student not found")
-);
-}
-
-@Override
-public List<StudentProfile> getAllStudents() {
-return studentRepo.findAll();
-}
-
-@Override
-public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-
-StudentProfile student =
-studentRepo.findById(studentId)
-.orElseThrow(() ->
-new ResourceNotFoundException("Student not found")
-);
-
-
-int caseCount = 0;
-if (integrityCaseRepo != null) {
-caseCount =
-integrityCaseRepo.findByStudentProfile(student).size();
-}
-
-
-boolean isRepeat = caseCount >= 2;
-student.setRepeatOffender(isRepeat);
-
-return studentRepo.save(student);
-}
-
+    @Override
+    public Optional<StudentProfile> findByStudentId(String studentId) {
+        return studentRepo.findByStudentId(studentId);
+    }
 }
