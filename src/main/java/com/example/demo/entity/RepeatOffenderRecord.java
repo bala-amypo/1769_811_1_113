@@ -72,4 +72,15 @@ return flagSeverity;
 public void setFlagSeverity(String flagSeverity) {
 this.flagSeverity = flagSeverity;
 }
+@Column(nullable = false)
+private LocalDate lastIncidentDate;
+
+public LocalDate getLastIncidentDate() {
+return lastIncidentDate;
+}
+
+public void setLastIncidentDate(LocalDate lastIncidentDate) {
+this.lastIncidentDate = lastIncidentDate;
+}
+
 }
