@@ -9,11 +9,14 @@ import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-@Service
+import org.springframework.stereotype.Service;
+
+@Service   // 🔴 REQUIRED FOR SPRING BOOT
 public class AuthServiceImpl implements AuthService {
 
 private final AppUserRepository appUserRepository;

@@ -2,7 +2,6 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.security.core.Authentication;
-
 import java.util.Date;
 
 public class JwtTokenProvider {
@@ -15,12 +14,7 @@ this.secret = secret;
 this.expiration = expiration;
 }
 
-public String generateToken(
-Authentication authentication,
-Long userId,
-String email,
-String role
-) {
+public String generateToken(Authentication auth, Long userId, String email, String role) {
 return Jwts.builder()
 .setSubject(email)
 .claim("userId", userId)
