@@ -39,33 +39,30 @@ public class AuthServiceImpl implements AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Override
+@Override
 public JwtResponse login(LoginRequest request) {
 
-AppUser user = userRepo.findByEmail(request.getEmail())
-.orElseThrow(() -> new RuntimeException("User not found"));
+    AppUser user = userRepo.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-throw new RuntimeException("Invalid password");
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    String role = user.getRoles().iterator().next().getName();
+
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("userId", user.getId());
+    claims.put("role", role);
+
+    String token = jwtTokenProvider.generateToken(
+            claims,
+            user.getEmail()
+    );
+
+    return new JwtResponse(token);
 }
 
-String role = user.getRoles().iterator().next().getName();
-
-String token =
-jwtTokenProvider.generateToken(
-null,
-user.getId(),
-user.getEmail(),
-role
-);
-
-return new JwtResponse(
-token,
-user.getId(),
-user.getEmail(),
-role
-);
-}
 
 
     @Override
