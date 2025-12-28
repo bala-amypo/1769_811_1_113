@@ -81,21 +81,22 @@ role
 @Transactional
 public void register(RegisterRequest request) {
 
-    if (userRepo.existsByEmail(request.getEmail())) {
-        throw new RuntimeException("Email already exists");
-    }
-
-    AppUser user = new AppUser();
-    user.setEmail(request.getEmail());
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setName(request.getName());
-
-    Role role = roleRepo.findByName(
-            request.getRole() == null ? "STUDENT" : request.getRole()
-    ).orElseThrow(() -> new RuntimeException("Role not found"));
-
-    user.getRoles().add(role);
-    userRepo.save(user);
+if (userRepo.existsByEmail(request.getEmail())) {
+throw new RuntimeException("Email already exists");
 }
 
+Role role =
+roleRepo.findByName(request.getRole())
+.orElseThrow(() ->
+new RuntimeException("Role not found: " + request.getRole())
+);
+
+AppUser user = new AppUser();
+user.setEmail(request.getEmail());
+user.setFullName(request.getFullName());
+user.setPassword(passwordEncoder.encode(request.getPassword()));
+user.setRoles(Collections.singleton(role));
+
+userRepo.save(user);
+}
 }
