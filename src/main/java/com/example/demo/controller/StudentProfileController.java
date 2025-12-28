@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.service.StudentProfileService;
 
@@ -11,29 +11,24 @@ import com.example.demo.service.StudentProfileService;
 @RequestMapping("/api/students")
 public class StudentProfileController {
 
-private final StudentProfileService studentProfileService;
+private final StudentProfileService service;
 
-public StudentProfileController(StudentProfileService studentProfileService) {
-this.studentProfileService = studentProfileService;
+public StudentProfileController(StudentProfileService service) {
+this.service = service;
 }
 
 @PostMapping
-public StudentProfile create(@RequestBody StudentProfile studentProfile) {
-return studentProfileService.createStudent(studentProfile);
+public StudentProfile create(@RequestBody StudentProfile student) {
+return service.createStudent(student);
 }
 
 @GetMapping("/{id}")
 public StudentProfile getById(@PathVariable Long id) {
-return studentProfileService.getStudentById(id);
-}
-@PreAuthorize("hasRole('ADMIN)")
-@GetMapping
-public List<StudentProfile> getAll() {
-return studentProfileService.getAllStudents();
+return service.getStudentById(id);
 }
 
-@PutMapping("/{id}/repeat-status")
-public StudentProfile updateRepeatStatus(@PathVariable Long id) {
-return studentProfileService.updateRepeatOffenderStatus(id);
+@GetMapping
+public List<StudentProfile> getAll() {
+return service.getAllStudents();
 }
 }
