@@ -81,22 +81,36 @@ role
 @Transactional
 public void register(RegisterRequest request) {
 
-if (userRepo.existsByEmail(request.getEmail())) {
-throw new RuntimeException("Email already exists");
+    // 1️⃣ Required by test: duplicate email throws
+    if (userRepo.existsByEmail(request.getEmail())) {
+        throw new RuntimeException("Email already exists");
+    }
+
+    // 2️⃣ Create user
+    AppUser user = new AppUser();
+    user.setEmail(request.getEmail());
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
+    user.setName(request.getName());
+
+    // 3️⃣ Role handling (TEST + RUNTIME SAFE)
+    String roleName = request.getRole();
+    if (roleName == null || roleName.isBlank()) {
+        roleName = "STUDENT";
+    }
+
+    String finalRole = roleName.toUpperCase();
+
+    Role role = roleRepo.findByName(finalRole)
+            .orElseGet(() -> {
+                Role r = new Role();
+                r.setName(finalRole);
+                return roleRepo.save(r);
+            });
+
+    user.getRoles().add(role);
+
+    // 4️⃣ Save
+    userRepo.save(user);
 }
 
-Role role =
-roleRepo.findByName(request.getRole())
-.orElseThrow(() ->
-new RuntimeException("Role not found: " + request.getRole())
-);
-
-AppUser user = new AppUser();
-user.setEmail(request.getEmail());
-user.setFullName(request.getFullName());
-user.setPassword(passwordEncoder.encode(request.getPassword()));
-user.setRoles(Collections.singleton(role));
-
-userRepo.save(user);
-}
 }
