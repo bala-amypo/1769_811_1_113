@@ -3,11 +3,25 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.EvidenceRecordService;
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.EvidenceRecord;
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.repository.EvidenceRecordRepository;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.service.EvidenceRecordService;
+
+import org.springframework.stereotype.Service;   // 🔴 ADD THIS
+
+@Service
+public class EvidenceRecordServiceImpl implements EvidenceRecordService {
+...
+}
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class EvidenceRecordServiceImpl implements EvidenceRecordService {
 
 private final EvidenceRecordRepository evidenceRepo;

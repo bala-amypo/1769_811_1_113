@@ -5,9 +5,9 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.StudentProfileService;
 import com.example.demo.util.RepeatOffenderCalculator;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
-
+@Service
 public class StudentProfileServiceImpl implements StudentProfileService {
 
 private final StudentProfileRepository studentRepo;

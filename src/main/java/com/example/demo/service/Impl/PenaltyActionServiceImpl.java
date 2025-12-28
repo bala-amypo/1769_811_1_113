@@ -4,10 +4,11 @@ import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.PenaltyActionService;
 
+import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class PenaltyActionServiceImpl implements PenaltyActionService {
 
 private final PenaltyActionRepository penaltyRepo;

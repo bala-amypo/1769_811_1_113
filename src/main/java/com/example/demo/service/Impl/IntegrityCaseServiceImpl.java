@@ -4,9 +4,10 @@ import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.service.IntegrityCaseService;
 
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
 
 private final IntegrityCaseRepository caseRepo;
