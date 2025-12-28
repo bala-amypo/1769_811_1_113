@@ -1,12 +1,12 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "student_profiles")
@@ -39,32 +39,24 @@ private boolean repeatOffender = false;
 @JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private LocalDateTime createdAt;
 
-/* Needed for mapping only */
 @ManyToOne
-@JoinColumn(name = "user_id")
+@JoinColumn(name = "user_id", nullable = false)
 @JsonIgnore
 private AppUser user;
 
-/* Needed for JPA + tests */
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {
-this.createdAt = LocalDateTime.now();
 }
 
 @PrePersist
 protected void onCreate() {
-if (this.createdAt == null) {
 this.createdAt = LocalDateTime.now();
 }
-}
-
-/* getters & setters unchanged */
 
 public Long getId() { return id; }
-public void setId(Long id) { this.id = id; }
 
 public String getStudentId() { return studentId; }
 public void setStudentId(String studentId) { this.studentId = studentId; }
@@ -81,16 +73,18 @@ public void setProgram(String program) { this.program = program; }
 public Integer getYearLevel() { return yearLevel; }
 public void setYearLevel(Integer yearLevel) { this.yearLevel = yearLevel; }
 
-public boolean getRepeatOffender() { return repeatOffender; }
 public boolean isRepeatOffender() { return repeatOffender; }
-public void setRepeatOffender(boolean repeatOffender) { this.repeatOffender = repeatOffender; }
+public void setRepeatOffender(boolean repeatOffender) {
+this.repeatOffender = repeatOffender;
+}
 
 public LocalDateTime getCreatedAt() { return createdAt; }
-public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
 public AppUser getUser() { return user; }
 public void setUser(AppUser user) { this.user = user; }
 
 public List<IntegrityCase> getIntegrityCases() { return integrityCases; }
-public void setIntegrityCases(List<IntegrityCase> integrityCases) { this.integrityCases = integrityCases; }
+public void setIntegrityCases(List<IntegrityCase> integrityCases) {
+this.integrityCases = integrityCases;
+}
 }

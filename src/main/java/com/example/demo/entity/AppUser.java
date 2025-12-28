@@ -5,8 +5,13 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(name = "app_users",uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
+@Table(
+name = "app_users",
+uniqueConstraints = @UniqueConstraint(columnNames = "email")
+)
 public class AppUser {
 
 @Id
@@ -37,15 +42,10 @@ inverseJoinColumns = @JoinColumn(name = "role_id")
 private Set<Role> roles = new HashSet<>();
 
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonIgnore
 private Set<StudentProfile> studentProfiles = new HashSet<>();
 
-public AppUser() {}
-
-public AppUser(String fullName,String email,String password) {
-this.fullName = fullName;
-this.email = email;
-this.password = password;
-this.enabled = true;
+public AppUser() {
 }
 
 @PrePersist
@@ -53,65 +53,28 @@ protected void onCreate() {
 this.createdAt = LocalDateTime.now();
 }
 
-public Long getId() {
-return id;
-}
+public Long getId() { return id; }
+public void setId(Long id) { this.id = id; }
 
-public void setId(Long id) {
-this.id = id;
-}
+public String getFullName() { return fullName; }
+public void setFullName(String fullName) { this.fullName = fullName; }
 
+public String getEmail() { return email; }
+public void setEmail(String email) { this.email = email; }
 
-public String getFullName() {
-return fullName;
-}
+public String getPassword() { return password; }
+public void setPassword(String password) { this.password = password; }
 
-public void setFullName(String fullName) {
-this.fullName = fullName;
-}
+public Boolean getEnabled() { return enabled; }
+public void setEnabled(Boolean enabled) { this.enabled = enabled; }
 
-public String getEmail() {
-return email;
-}
+public LocalDateTime getCreatedAt() { return createdAt; }
 
-public void setEmail(String email) {
-this.email = email;
-}
+public Set<Role> getRoles() { return roles; }
+public void setRoles(Set<Role> roles) { this.roles = roles; }
 
-public String getPassword() {
-return password;
-}
-
-public void setPassword(String password) {
-this.password = password;
-}
-
-public Boolean getEnabled() {
-return enabled;
-}
-
-public void setEnabled(Boolean enabled) {
-this.enabled = enabled;
-}
-
-public LocalDateTime getCreatedAt() {
-return createdAt;
-}
-
-public Set<Role> getRoles() {
-return roles;
-}
-
-public void setRoles(Set<Role> roles) {
-this.roles = roles;
-}
-
-public Set<StudentProfile> getStudentProfiles() {
-return studentProfiles;
-}
-
+public Set<StudentProfile> getStudentProfiles() { return studentProfiles; }
 public void setStudentProfiles(Set<StudentProfile> studentProfiles) {
 this.studentProfiles = studentProfiles;
 }
-
 }
