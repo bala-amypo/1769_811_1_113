@@ -2,47 +2,88 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
-    // Generate a secure key for HS256
-    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long expirationMillis = 1000 * 60 * 60; // 1 hour
+private final Key key =
+Keys.hmacShaKeyFor("test-secret-key-test-secret-key".getBytes());
 
-    // This is the method AuthServiceImpl is looking for
-    public String generateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
-                .signWith(key)
-                .compact();
-    }
+private final long validityMs = 3600000;
 
-    public String getUsername(String token) {
-        return getAllClaims(token).getSubject();
-    }
+public JwtTokenProvider() {}
 
-    public boolean isTokenValid(String token, String username) {
-        return username.equals(getUsername(token)) && !isTokenExpired(token);
-    }
+public String generateToken(
+Authentication authentication,
+Long userId,
+String email,
+String role
+) {
 
-    private boolean isTokenExpired(String token) {
-        return getAllClaims(token).getExpiration().before(new Date());
-    }
+Date now = new Date();
+Date expiry = new Date(now.getTime() + validityMs);
 
-    private Claims getAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+return Jwts.builder()
+.setSubject(email)
+.claim("userId", userId)
+.claim("role", role)
+.setIssuedAt(now)
+.setExpiration(expiry)
+.signWith(key, SignatureAlgorithm.HS256)
+.compact();
+}
+
+public String generateToken(
+Map<String,Object> claims,
+String subject
+) {
+
+Date now = new Date();
+Date expiry = new Date(now.getTime() + validityMs);
+
+return Jwts.builder()
+.setClaims(claims)
+.setSubject(subject)
+.setIssuedAt(now)
+.setExpiration(expiry)
+.signWith(key, SignatureAlgorithm.HS256)
+.compact();
+}
+
+public boolean validateToken(String token) {
+try {
+Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+return true;
+} catch (Exception e) {
+return false;
+}
+}
+
+public String getUsernameFromToken(String token) {
+return Jwts.parserBuilder()
+.setSigningKey(key)
+.build()
+.parseClaimsJws(token)
+.getBody()
+.getSubject();
+}
+
+/* REQUIRED BY FILTER */
+public String getUsername(String token) {
+return getUsernameFromToken(token);
+}
+
+public boolean isTokenValid(String token, String username) {
+try {
+return username.equals(getUsernameFromToken(token));
+} catch (Exception e) {
+return false;
+}
+}
 }

@@ -40,22 +40,33 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtResponse login(LoginRequest request) {
-        // 1. Manual User Check (Safe & Prevents Loop)
-        AppUser user = userRepo.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+public JwtResponse login(LoginRequest request) {
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
+AppUser user = userRepo.findByEmail(request.getEmail())
+.orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Generate Token (FIXED: Added empty claims map)
-        Map<String, Object> claims = new HashMap<>();
-        String token = jwtTokenProvider.generateToken(claims, user.getEmail());
+if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+throw new RuntimeException("Invalid password");
+}
 
-        // 3. Return Response (FIXED: Only returns token)
-        return new JwtResponse(token);
-    }
+String role = user.getRoles().iterator().next().getName();
+
+String token =
+jwtTokenProvider.generateToken(
+null,
+user.getId(),
+user.getEmail(),
+role
+);
+
+return new JwtResponse(
+token,
+user.getId(),
+user.getEmail(),
+role
+);
+}
+
 
     @Override
     @Transactional
