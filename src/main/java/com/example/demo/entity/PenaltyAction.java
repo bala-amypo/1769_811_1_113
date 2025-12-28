@@ -6,33 +6,94 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "penalty_actions")
 public class PenaltyAction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "integrity_case_id", nullable = false)
-    private IntegrityCase integrityCase;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
 
-    private String penaltyType; // WARNING, GRADE_REDUCTION, ZERO_MARK, SUSPENSION
-    private String details;
-    private String issuedBy;
-    private LocalDateTime issuedAt;
+@ManyToOne(optional = false)
+@JoinColumn(name = "integrity_case_id", nullable = false)
+private IntegrityCase integrityCase;
 
-    @PrePersist
-    protected void onCreate() { this.issuedAt = LocalDateTime.now(); }
+@Column(nullable = false)
+private String penaltyType;
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public IntegrityCase getIntegrityCase() { return integrityCase; }
-    public void setIntegrityCase(IntegrityCase integrityCase) { this.integrityCase = integrityCase; }
-    public String getPenaltyType() { return penaltyType; }
-    public void setPenaltyType(String penaltyType) { this.penaltyType = penaltyType; }
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
-    public String getIssuedBy() { return issuedBy; }
-    public void setIssuedBy(String issuedBy) { this.issuedBy = issuedBy; }
-    public LocalDateTime getIssuedAt() { return issuedAt; }
-    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
+@Column(nullable = false, length = 2000)
+private String details;
+
+@Column(nullable = false)
+private String issuedBy;
+
+@Column(nullable = false, updatable = false)
+private LocalDateTime issuedAt;
+
+public PenaltyAction() {
+this.issuedAt = LocalDateTime.now();
+}
+
+public PenaltyAction(IntegrityCase integrityCase,String penaltyType,String details,String issuedBy) {
+this.integrityCase = integrityCase;
+this.penaltyType = penaltyType;
+this.details = details;
+this.issuedBy = issuedBy;
+}
+
+@jakarta.persistence.Column(nullable = false, updatable = false)
+private java.time.LocalDateTime createdAt;
+
+@jakarta.persistence.PrePersist
+protected void onCreate() {
+this.createdAt = java.time.LocalDateTime.now();
+}
+
+
+
+
+public Long getId() {
+return id;
+}
+
+public IntegrityCase getIntegrityCase() {
+return integrityCase;
+}
+
+public void setIntegrityCase(IntegrityCase integrityCase) {
+this.integrityCase = integrityCase;
+}
+
+public String getPenaltyType() {
+return penaltyType;
+}
+
+public void setPenaltyType(String penaltyType) {
+this.penaltyType = penaltyType;
+}
+
+public String getDetails() {
+return details;
+}
+
+public void setDetails(String details) {
+this.details = details;
+}
+
+public String getIssuedBy() {
+return issuedBy;
+}
+
+public void setIssuedBy(String issuedBy) {
+this.issuedBy = issuedBy;
+}
+
+public LocalDateTime getIssuedAt() {
+return issuedAt;
+}
+public void setId(Long id) {
+this.id = id;
+}
+
+public void setIssuedAt(LocalDateTime issuedAt) {
+this.issuedAt = issuedAt;
+}
+
 }
