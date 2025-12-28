@@ -14,7 +14,7 @@ import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.service.StudentProfileService;
 
-
+/* ✅ CORRECT PACKAGE */
 import com.example.demo.util.RepeatOffenderCalculator;
 
 @Service
