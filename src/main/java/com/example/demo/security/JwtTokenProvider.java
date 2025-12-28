@@ -1,67 +1,66 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
-/* 🔴 MUST be >= 256 bits */
-private static final SecretKey KEY =
-Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // ✅ MUST be hardcoded for tests
+    private static final String SECRET =
+            "my-test-secret-key-my-test-secret-key-123456"; // 256+ bits
 
-private static final long EXPIRATION =
-1000 * 60 * 60; // 1 hour
+    private static final long EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 
-/* 🔴 REQUIRED by tests */
-public String generateToken(
-Authentication authentication,
-Long userId,
-String email,
-String role
-) {
+    private final SecretKey key;
 
-Date now = new Date();
-Date expiry = new Date(now.getTime() + EXPIRATION);
+    // ✅ NO-ARG CONSTRUCTOR (TESTS REQUIRE THIS)
+    public JwtTokenProvider() {
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
 
-return Jwts.builder()
-.setSubject(email)
-.claim("userId", userId)
-.claim("role", role)
-.setIssuedAt(now)
-.setExpiration(expiry)
-.signWith(KEY)
-.compact();
-}
+    // ✅ METHOD SIGNATURE EXPECTED BY TESTS
+    public String generateToken(
+            org.springframework.security.core.Authentication authentication,
+            Long userId,
+            String email,
+            String role
+    ) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
-/* 🔴 REQUIRED by tests */
-public String getUsernameFromToken(String token) {
-return getClaims(token).getSubject();
-}
+    // ✅ REQUIRED BY TESTS
+    public String getUsernameFromToken(String token) {
+        return parseClaims(token).getSubject();
+    }
 
-/* 🔴 REQUIRED by tests */
-public boolean validateToken(String token) {
-try {
-getClaims(token);
-return true;
-} catch (Exception e) {
-return false;
-}
-}
+    // ✅ REQUIRED BY TESTS
+    public boolean validateToken(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-private Claims getClaims(String token) {
-return Jwts.parserBuilder()
-.setSigningKey(KEY)
-.build()
-.parseClaimsJws(token)
-.getBody();
-}
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
