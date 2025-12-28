@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.StudentProfile;
@@ -13,50 +11,25 @@ import com.example.demo.service.StudentProfileService;
 @RequestMapping("/api/students")
 public class StudentProfileController {
 
-private final StudentProfileService studentProfileService;
+private final StudentProfileService service;
 
-public StudentProfileController(StudentProfileService studentProfileService) {
-this.studentProfileService = studentProfileService;
+public StudentProfileController(StudentProfileService service) {
+this.service = service;
 }
 
-/* ================= CREATE STUDENT ================= */
 @PostMapping
-public ResponseEntity<StudentProfile> createStudent(
-@RequestBody StudentProfile student
-) {
-StudentProfile created =
-studentProfileService.createStudent(student);
-
-return new ResponseEntity<>(created, HttpStatus.CREATED);
+public StudentProfile create(@RequestBody StudentProfile student) {
+return service.createStudent(student);
 }
 
-/* ================= GET BY ID ================= */
 @GetMapping("/{id}")
-public ResponseEntity<StudentProfile> getStudentById(
-@PathVariable Long id
-) {
-StudentProfile student =
-studentProfileService.getStudentById(id);
-
-return ResponseEntity.ok(student);
+public StudentProfile getById(@PathVariable Long id) {
+return service.getStudentById(id);
 }
 
-/* ================= GET ALL ================= */
 @GetMapping
-public ResponseEntity<List<StudentProfile>> getAllStudents() {
-return ResponseEntity.ok(
-studentProfileService.getAllStudents()
-);
+public List<StudentProfile> getAll() {
+return service.getAllStudents();
 }
 
-/* ================= UPDATE REPEAT OFFENDER ================= */
-@PutMapping("/{id}/repeat-status")
-public ResponseEntity<StudentProfile> updateRepeatOffenderStatus(
-@PathVariable Long id
-) {
-StudentProfile updated =
-studentProfileService.updateRepeatOffenderStatus(id);
-
-return ResponseEntity.ok(updated);
-}
 }
