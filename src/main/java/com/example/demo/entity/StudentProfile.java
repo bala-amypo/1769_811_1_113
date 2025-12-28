@@ -18,8 +18,21 @@ private String email;
 
 private int yearLevel;
 
+@Column(nullable = false)
+private boolean repeatOffender = false;
+
 public StudentProfile() {
 }
+
+public boolean isRepeatOffender() {
+return repeatOffender;
+}
+
+public void setRepeatOffender(boolean repeatOffender) {
+this.repeatOffender = repeatOffender;
+}
+
+
 
 public StudentProfile(String name, String email, int yearLevel) {
 this.name = name;
