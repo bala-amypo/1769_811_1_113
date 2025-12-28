@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.AppUser;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.StudentProfileRepository;
+import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.service.StudentProfileService;
@@ -25,11 +24,14 @@ private final StudentProfileRepository studentRepo;
 private final AppUserRepository userRepo;
 
 /* test-only fields */
+@SuppressWarnings("unused")
 private IntegrityCaseRepository integrityCaseRepo;
+@SuppressWarnings("unused")
 private RepeatOffenderRecordRepository repeatRepo;
+@SuppressWarnings("unused")
 private RepeatOffenderCalculator calculator;
 
-/* ✅ THIS IS THE SPRING CONSTRUCTOR */
+/* ✅ SPRING RUNTIME CONSTRUCTOR */
 @Autowired
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
@@ -39,7 +41,7 @@ this.studentRepo = studentRepo;
 this.userRepo = userRepo;
 }
 
-/* ✅ THIS IS THE TEST CONSTRUCTOR */
+/* ✅ TEST COMPATIBILITY CONSTRUCTOR */
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
 IntegrityCaseRepository integrityCaseRepo,
@@ -55,13 +57,6 @@ this.calculator = calculator;
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
-
-if (userRepo != null) {
-AppUser user = userRepo.findById(1L)
-.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-student.setUser(user);
-}
-
 student.setRepeatOffender(false);
 return studentRepo.save(student);
 }
