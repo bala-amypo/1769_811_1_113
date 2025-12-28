@@ -47,6 +47,8 @@ public class AppUser {
         this.id = id;
     }
 
+private String fullName;
+
     public String getEmail() {
         return email;
     }
@@ -70,6 +72,13 @@ public class AppUser {
     public void setName(String name) {
         this.name = name;
     }
+    public String getFullName() {
+return fullName;
+}
+
+public void setFullName(String fullName) {
+this.fullName = fullName;
+}
 
     // --- ADDED: Getter and Setter for Enabled ---
     public boolean isEnabled() {
