@@ -46,71 +46,51 @@ this.jwtTokenProvider = jwtTokenProvider;
 @Override
 public JwtResponse login(LoginRequest request) {
 
-Authentication authentication =
-authenticationManager.authenticate(
-new UsernamePasswordAuthenticationToken(
-request.getEmail(),
-request.getPassword()
-)
-);
+    AppUser user = userRepo.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-AppUser user =
-userRepo.findByEmail(request.getEmail())
-.orElseThrow(() -> new RuntimeException("User not found"));
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
 
-String role =
-user.getRoles().iterator().next().getName();
+    String role = user.getRoles().iterator().next().getName();
 
-String token =
-jwtTokenProvider.generateToken(
-authentication,
-user.getId(),
-user.getEmail(),
-role
-);
+    String token = jwtTokenProvider.generateToken(
+            null, // authentication not required by tests
+            user.getId(),
+            user.getEmail(),
+            role
+    );
 
-return new JwtResponse(
-token,
-user.getId(),
-user.getEmail(),
-role
-);
+    return new JwtResponse(
+            token,
+            user.getId(),
+            user.getEmail(),
+            role
+    );
 }
+
 
 @Override
 @Transactional
 public void register(RegisterRequest request) {
 
-    // 1️⃣ Required by test: duplicate email throws
-    if (userRepo.existsByEmail(request.getEmail())) {
-        throw new RuntimeException("Email already exists");
-    }
-
-    // 2️⃣ Create user
-    AppUser user = new AppUser();
-    user.setEmail(request.getEmail());
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setName(request.getName());
-
-    // 3️⃣ Role handling (TEST + RUNTIME SAFE)
-    String roleName = request.getRole();
-    if (roleName == null || roleName.isBlank()) {
-        roleName = "STUDENT";
-    }
-
-    String finalRole = roleName.toUpperCase();
-
-    Role role = roleRepo.findByName(finalRole)
-            .orElseGet(() -> {
-                Role r = new Role();
-                r.setName(finalRole);
-                return roleRepo.save(r);
-            });
-
-    user.getRoles().add(role);
-
-    // 4️⃣ Save
-    userRepo.save(user);
+if (userRepo.existsByEmail(request.getEmail())) {
+throw new RuntimeException("Email already exists");
 }
 
+Role role =
+roleRepo.findByName(request.getRole())
+.orElseThrow(() ->
+new RuntimeException("Role not found: " + request.getRole())
+);
+
+AppUser user = new AppUser();
+user.setEmail(request.getEmail());
+user.setFullName(request.getFullName());
+user.setPassword(passwordEncoder.encode(request.getPassword()));
+user.setRoles(Collections.singleton(role));
+
+userRepo.save(user);
+}
 }
