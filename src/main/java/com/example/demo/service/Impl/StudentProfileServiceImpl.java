@@ -72,19 +72,7 @@ this.calculator = calculator;
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
-
 student.setRepeatOffender(false);
-if (studentRepo.existsByStudentId(student.getStudentId())) {
-throw new IllegalArgumentException("Student ID already exists");
-}
-
-if (studentRepo.existsByEmail(student.getEmail())) {
-throw new IllegalArgumentException("Email already exists");
-}
-
-/* ✅ SAFE: do not throw */
-userRepo.findById(1L).ifPresent(student::setUser);
-
 return studentRepo.save(student);
 }
 
