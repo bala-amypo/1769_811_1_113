@@ -40,8 +40,8 @@ private boolean repeatOffender = false;
 private LocalDateTime createdAt;
 
 @ManyToOne
-@JoinColumn(name = "user_id", nullable = true)
-@JsonBackReference
+@JoinColumn(name = "user_id", nullable = false)
+@JsonIgnore
 private AppUser user;
 
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
