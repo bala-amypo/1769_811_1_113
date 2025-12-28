@@ -11,24 +11,29 @@ import com.example.demo.service.StudentProfileService;
 @RequestMapping("/api/students")
 public class StudentProfileController {
 
-private final StudentProfileService service;
+private final StudentProfileService studentProfileService;
 
-public StudentProfileController(StudentProfileService service) {
-this.service = service;
+public StudentProfileController(StudentProfileService studentProfileService) {
+this.studentProfileService = studentProfileService;
 }
 
 @PostMapping
-public StudentProfile create(@RequestBody StudentProfile student) {
-return service.createStudent(student);
+public StudentProfile create(@RequestBody StudentProfile studentProfile) {
+return studentProfileService.createStudent(studentProfile);
 }
 
 @GetMapping("/{id}")
 public StudentProfile getById(@PathVariable Long id) {
-return service.getStudentById(id);
+return studentProfileService.getStudentById(id);
 }
 
 @GetMapping
 public List<StudentProfile> getAll() {
-return service.getAllStudents();
+return studentProfileService.getAllStudents();
+}
+
+@PutMapping("/{id}/repeat-status")
+public StudentProfile updateRepeatStatus(@PathVariable Long id) {
+return studentProfileService.updateRepeatOffenderStatus(id);
 }
 }

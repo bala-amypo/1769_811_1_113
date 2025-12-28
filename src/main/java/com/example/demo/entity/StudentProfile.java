@@ -32,11 +32,9 @@ private String program;
 private Integer yearLevel;
 
 @Column(nullable = false)
-@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private boolean repeatOffender = false;
 
 @Column(nullable = false, updatable = false)
-@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 private LocalDateTime createdAt;
 
 @ManyToOne
@@ -48,13 +46,19 @@ private AppUser user;
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
-public StudentProfile() {
-}
+public StudentProfile() {}
 
 @PrePersist
 protected void onCreate() {
 this.createdAt = LocalDateTime.now();
 }
+
+/* REQUIRED BY TESTS */
+public void setId(Long id) { this.id = id; }
+public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+public boolean getRepeatOffender() { return repeatOffender; }
+
+/* getters & setters */
 
 public Long getId() { return id; }
 

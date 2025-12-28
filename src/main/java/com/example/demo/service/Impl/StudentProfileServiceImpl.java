@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.AppUserRepository;
-import com.example.demo.repository.StudentProfileRepository;
+import com.example.demo.repository.*;
 import com.example.demo.service.StudentProfileService;
 
 @Service
@@ -18,13 +17,19 @@ public class StudentProfileServiceImpl
 implements StudentProfileService {
 
 private final StudentProfileRepository studentRepo;
+private final IntegrityCaseRepository integrityCaseRepository;
+private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
 private final AppUserRepository userRepo;
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
+IntegrityCaseRepository integrityCaseRepository,
+RepeatOffenderRecordRepository repeatOffenderRecordRepository,
 AppUserRepository userRepo
 ) {
 this.studentRepo = studentRepo;
+this.integrityCaseRepository = integrityCaseRepository;
+this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
 this.userRepo = userRepo;
 }
 
@@ -61,5 +66,18 @@ new ResourceNotFoundException("Student not found")
 @Override
 public List<StudentProfile> getAllStudents() {
 return studentRepo.findAll();
+}
+
+@Override
+public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+
+StudentProfile student =
+studentRepo.findById(studentId)
+.orElseThrow(() ->
+new ResourceNotFoundException("Student not found")
+);
+
+student.setRepeatOffender(true);
+return studentRepo.save(student);
 }
 }

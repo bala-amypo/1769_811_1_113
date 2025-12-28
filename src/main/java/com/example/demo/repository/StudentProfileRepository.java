@@ -7,6 +7,5 @@ public interface StudentProfileRepository
 extends JpaRepository<StudentProfile, Long> {
 
 boolean existsByStudentId(String studentId);
-
 boolean existsByEmail(String email);
 }

@@ -8,10 +8,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(
-name = "app_users",
-uniqueConstraints = @UniqueConstraint(columnNames = "email")
-)
+@Table(name = "app_users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class AppUser {
 
 @Id
@@ -45,8 +42,7 @@ private Set<Role> roles = new HashSet<>();
 @JsonIgnore
 private Set<StudentProfile> studentProfiles = new HashSet<>();
 
-public AppUser() {
-}
+public AppUser() {}
 
 @PrePersist
 protected void onCreate() {
