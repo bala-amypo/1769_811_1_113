@@ -1,4 +1,4 @@
-package com.example.demo.service.Impl; // Note: Ensure package name is lowercase 'impl' usually
+package com.example.demo.service.Impl;
 
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.JwtResponse;
@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashMap; // <--- Added this import
 import java.util.HashSet;
+import java.util.Map;     // <--- Added this import
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -24,8 +26,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // REMOVED AuthenticationManager to prevent the 500 Crash / Loop
-    
     public AuthServiceImpl(
             AppUserRepository userRepo,
             RoleRepository roleRepo,
@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponse login(LoginRequest request) {
-        // 1. Manual User Check (Safe & Prevents Circular Loop)
+        // 1. Manual User Check (Safe & Prevents Loop)
         AppUser user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -48,19 +48,16 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        // 2. Generate Token
-        // NOTE: Ensure your JwtTokenProvider matches this signature!
-        // If your provider takes (Map, String), keep your version. 
-        // If it takes just (String), use: generateToken(user.getEmail())
-        String token = jwtTokenProvider.generateToken(user.getEmail());
+        // 2. Generate Token (FIXED: Added empty claims map)
+        Map<String, Object> claims = new HashMap<>();
+        String token = jwtTokenProvider.generateToken(claims, user.getEmail());
 
-        // 3. Return Response (Assuming JwtResponse takes 4 args based on previous chats)
-        String roleName = user.getRoles().isEmpty() ? "USER" : user.getRoles().iterator().next().getName();
-        return new JwtResponse(token, user.getId(), user.getEmail(), roleName);
+        // 3. Return Response (FIXED: Only returns token)
+        return new JwtResponse(token);
     }
 
     @Override
-    @Transactional // <--- CRITICAL FIX: Keeps the Role "attached" so User can save it
+    @Transactional
     public void register(RegisterRequest request) {
         try {
             // 1. Check if email exists
@@ -71,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
             // 2. Create User
             AppUser user = new AppUser();
             user.setEmail(request.getEmail());
-            user.setName(request.getName()); // Ensure AppUser has .setName()!
+            user.setName(request.getName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             // 3. Handle Role
@@ -90,7 +87,6 @@ public class AuthServiceImpl implements AuthService {
                     });
 
             // 4. Set Roles
-            // We use new HashSet to ensure the collection is mutable (Hibernate prefers this)
             user.setRoles(new HashSet<>(Collections.singletonList(role)));
 
             // 5. Save User
@@ -98,10 +94,9 @@ public class AuthServiceImpl implements AuthService {
             System.out.println("User registered successfully: " + user.getEmail());
 
         } catch (Exception e) {
-            // THIS WILL PRINT THE REAL ERROR IN YOUR CONSOLE
             System.err.println("ERROR IN REGISTER: " + e.getMessage());
             e.printStackTrace(); 
-            throw e; // Re-throw so Controller knows it failed
+            throw e; 
         }
     }
 }
