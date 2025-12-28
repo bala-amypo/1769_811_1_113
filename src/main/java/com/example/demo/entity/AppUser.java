@@ -1,3 +1,10 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "app_users")
 public class AppUser {
@@ -12,8 +19,10 @@ private String email;
 @Column(nullable = false)
 private String password;
 
+/* ✅ KEEP ONLY THIS */
 @Column(name = "full_name", nullable = false)
 private String fullName;
+
 
 @Column(nullable = false)
 private boolean enabled = true;
@@ -29,7 +38,12 @@ inverseJoinColumns = @JoinColumn(name = "role_id")
 )
 private Set<Role> roles = new HashSet<>();
 
-// getters & setters
+@PrePersist
+protected void onCreate() {
+this.createdAt = LocalDateTime.now();
+}
+
+/* GETTERS & SETTERS */
 
 public Long getId() { return id; }
 public void setId(Long id) { this.id = id; }
@@ -50,9 +64,4 @@ public LocalDateTime getCreatedAt() { return createdAt; }
 
 public Set<Role> getRoles() { return roles; }
 public void setRoles(Set<Role> roles) { this.roles = roles; }
-
-@PrePersist
-protected void onCreate() {
-this.createdAt = LocalDateTime.now();
-}
 }
