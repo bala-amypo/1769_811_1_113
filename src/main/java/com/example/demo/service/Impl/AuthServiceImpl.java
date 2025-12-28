@@ -16,47 +16,27 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service   // 🔴 REQUIRED FOR SPRING BOOT
+@Service
 public class AuthServiceImpl implements AuthService {
 
-private final AppUserRepository appUserRepository;
-private final RoleRepository roleRepository;
-private final PasswordEncoder passwordEncoder;
 private final AuthenticationManager authenticationManager;
 private final JwtTokenProvider jwtTokenProvider;
+private final AppUserRepository userRepository;
+private final RoleRepository roleRepository;
+private final PasswordEncoder passwordEncoder;
 
-/* 🔴 CONSTRUCTOR ORDER MUST BE EXACT (TESTED) */
 public AuthServiceImpl(
-AppUserRepository appUserRepository,
-RoleRepository roleRepository,
-PasswordEncoder passwordEncoder,
 AuthenticationManager authenticationManager,
-JwtTokenProvider jwtTokenProvider
+JwtTokenProvider jwtTokenProvider,
+AppUserRepository userRepository,
+RoleRepository roleRepository,
+PasswordEncoder passwordEncoder
 ) {
-this.appUserRepository = appUserRepository;
-this.roleRepository = roleRepository;
-this.passwordEncoder = passwordEncoder;
 this.authenticationManager = authenticationManager;
 this.jwtTokenProvider = jwtTokenProvider;
-}
-
-@Override
-public void register(RegisterRequest request) {
-
-if (appUserRepository.existsByEmail(request.getEmail())) {
-throw new IllegalArgumentException("Email already in use");
-}
-
-Role role = roleRepository.findByName(request.getRole())
-.orElseThrow(() -> new IllegalArgumentException("Invalid role"));
-
-AppUser user = new AppUser();
-user.setEmail(request.getEmail());
-user.setPassword(passwordEncoder.encode(request.getPassword()));
-user.setFullName(request.getFullName());
-user.getRoles().add(role);
-
-appUserRepository.save(user);
+this.userRepository = userRepository;
+this.roleRepository = roleRepository;
+this.passwordEncoder = passwordEncoder;
 }
 
 @Override
@@ -70,23 +50,38 @@ request.getPassword()
 )
 );
 
-AppUser user = appUserRepository.findByEmail(request.getEmail())
-.orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-String role = user.getRoles().iterator().next().getName();
+AppUser user =
+userRepository.findByEmail(request.getEmail()).orElseThrow();
 
 String token = jwtTokenProvider.generateToken(
 authentication,
 user.getId(),
 user.getEmail(),
-role
+user.getRole()
 );
 
 return new JwtResponse(
 token,
 user.getId(),
 user.getEmail(),
-role
+user.getRole()
 );
+}
+
+@Override
+public void register(RegisterRequest request) {
+
+Role role = roleRepository.findByName(request.getRole())
+.orElseThrow(() ->
+new RuntimeException("Invalid role")
+);
+
+AppUser user = new AppUser();
+user.setEmail(request.getEmail());
+user.setPassword(passwordEncoder.encode(request.getPassword()));
+user.setFullName(request.getFullName());
+user.setRole(role.getName());
+
+userRepository.save(user);
 }
 }
