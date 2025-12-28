@@ -11,7 +11,6 @@ import com.example.demo.entity.StudentProfile;
 @Component
 public class RepeatOffenderCalculator {
 
-/* EXISTING LOGIC */
 public RepeatOffenderRecord computeRepeatOffenderRecord(
 StudentProfile student,
 List<IntegrityCase> cases
@@ -33,10 +32,4 @@ record.setFlagSeverity("LOW");
 
 return record;
 }
-
-/* REQUIRED BY SERVICE + TESTS */
-public boolean isRepeatOffender(List<IntegrityCase> cases) {
-return cases != null && cases.size() >= 2;
-}
-
 }
