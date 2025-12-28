@@ -6,20 +6,24 @@ import jakarta.persistence.*;
 @Table(name = "roles")
 public class Role {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Column(nullable = false, unique = true)
-private String name;
+    @Column(unique = true, nullable = false)
+    private String name;
 
-public Role() {}
+    public Role() {}
 
-public Role(String name) {
-this.name = name;
-}
+    public Role(String name) {
+        this.name = name;
+    }
 
-public Long getId() { return id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-public String getName() { return name; }
+    public String getName() { return name; }
+    
+    // ✅ The error proves this is currently missing in your file
+    public void setName(String name) { this.name = name; }
 }

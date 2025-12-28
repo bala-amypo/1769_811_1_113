@@ -1,13 +1,13 @@
 package com.example.demo.service.Impl;
 
-import com.example.demo.dto.AuthRequestDto;
-import com.example.demo.dto.AuthResponseDto;
-import com.example.demo.dto.RegisterRequestDto;
+import com.example.demo.dto.LoginRequest;     // ✅ Changed
+import com.example.demo.dto.JwtResponse;      // ✅ Changed
+import com.example.demo.dto.RegisterRequest;  // ✅ Changed
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.security.JwtTokenProvider; // ✅ Using your file name
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,14 +25,14 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider; // ✅ Renamed
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(
             AppUserRepository userRepo,
             RoleRepository roleRepo,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
-            JwtTokenProvider jwtTokenProvider // ✅ Injected
+            JwtTokenProvider jwtTokenProvider
     ) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
@@ -42,7 +42,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponseDto login(AuthRequestDto request) {
+    public JwtResponse login(LoginRequest request) {
+        // 1. Authenticate using email and password from LoginRequest
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -50,18 +51,20 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
+        // 2. Find User
         AppUser user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 3. Generate Token
         Map<String, Object> claims = new HashMap<>();
-        // Now this matches the signature in Step 1
         String token = jwtTokenProvider.generateToken(claims, user.getEmail());
 
-        return new AuthResponseDto(token);
+        // 4. Return your specific JwtResponse
+        return new JwtResponse(token);
     }
 
     @Override
-    public void register(RegisterRequestDto request) {
+    public void register(RegisterRequest request) {
         if (userRepo.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -71,6 +74,7 @@ public class AuthServiceImpl implements AuthService {
         user.setName(request.getName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        // --- Handle Role from RegisterRequest ---
         String roleName = request.getRole();
         if (roleName == null || roleName.isEmpty()) {
             roleName = "STUDENT";

@@ -1,31 +1,30 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.JwtResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.LoginRequest;     // ✅ Changed
+import com.example.demo.dto.JwtResponse;      // ✅ Changed
+import com.example.demo.dto.RegisterRequest;  // ✅ Changed
 import com.example.demo.service.AuthService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
-@Tag(name = "Authentication")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-private final AuthService authService;
+    private final AuthService authService;
 
-public AuthController(AuthService authService) {
-this.authService = authService;
-}
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-@PostMapping("/register")
-public void register(@RequestBody RegisterRequest request) {
-authService.register(request);
-}
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.ok("User registered successfully");
+    }
 
-@PostMapping("/login")
-public JwtResponse login(@RequestBody LoginRequest request) {
-return authService.login(request);
-}
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
 }
