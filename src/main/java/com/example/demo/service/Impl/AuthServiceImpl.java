@@ -10,34 +10,30 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // <--- 1. ADD THIS IMPORT
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional // <--- 2. ADD THIS ANNOTATION
+@Transactional
 public class AuthServiceImpl implements AuthService {
 
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
+    // NOTE: AuthenticationManager removed to prevent StackOverflowError (Exit Code 137)
 
     public AuthServiceImpl(
             AppUserRepository appUserRepository,
             RoleRepository roleRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
             JwtTokenProvider jwtTokenProvider
     ) {
         this.appUserRepository = appUserRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -58,10 +54,11 @@ public class AuthServiceImpl implements AuthService {
 
         appUserRepository.save(user);
     }
-@Override
+
+    @Override
     public JwtResponse login(LoginRequest request) {
-        // 1. Check if user exists
-        AppUser user = userRepository.findByEmail(request.getEmail())
+        // 1. Check if user exists (Fixed variable name: appUserRepository)
+        AppUser user = appUserRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + request.getEmail()));
 
         // 2. Check Password
@@ -69,10 +66,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        // 3. Generate Token
-        String token = tokenProvider.generateToken(user.getEmail());
+        // 3. Generate Token (Fixed variable name: jwtTokenProvider)
+        String token = jwtTokenProvider.generateToken(user.getEmail());
 
-        // 4. Get Role (Handle case where user has no role)
+        // 4. Get Role
         String roleName = user.getRoles().isEmpty() ? "USER" : user.getRoles().iterator().next().getName();
 
         // 5. Return JwtResponse
