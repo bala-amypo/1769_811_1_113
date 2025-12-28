@@ -81,7 +81,7 @@ if (studentRepo.existsByEmail(student.getEmail())) {
 throw new IllegalArgumentException("Email already exists");
 }
 
-/* ✅ TEST SAFE + RUNTIME SAFE */
+
 if (userRepo != null) {
 userRepo.findById(1L).ifPresent(student::setUser);
 }
