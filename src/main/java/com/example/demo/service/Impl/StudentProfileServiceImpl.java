@@ -25,6 +25,7 @@ public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
 IntegrityCaseRepository integrityCaseRepo,
 RepeatOffenderRecordRepository repeatOffenderRecordRepo,
+private final AppUserRepository userRepo;
 RepeatOffenderCalculator calculator
 ) {
 this.studentRepo = studentRepo;
@@ -35,13 +36,10 @@ this.calculator = calculator;
 }
 
 
-private IntegrityCaseRepository integrityCaseRepo;
-private RepeatOffenderRecordRepository repeatOffenderRecordRepo;
-private RepeatOffenderCalculator calculator;
 
 
-private final StudentProfileRepository studentRepo;
-private final AppUserRepository userRepo;
+
+
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
