@@ -116,14 +116,14 @@ studentRepo.findById(studentId)
 new ResourceNotFoundException("Student not found")
 );
 
-/* test-safe: integrityCaseRepo exists only in tests */
+
 int caseCount = 0;
 if (integrityCaseRepo != null) {
 caseCount =
 integrityCaseRepo.findByStudentProfile(student).size();
 }
 
-/* core rule */
+
 boolean isRepeat = caseCount >= 2;
 student.setRepeatOffender(isRepeat);
 
