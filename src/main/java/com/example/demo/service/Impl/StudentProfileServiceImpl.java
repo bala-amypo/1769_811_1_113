@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.entity.AppUser;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.*;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.RepeatOffenderRecordRepository;
+import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
+import com.example.demo.util.RepeatOffenderCalculator;
 
 @Service
 @Transactional
@@ -19,39 +21,23 @@ implements StudentProfileService {
 private final StudentProfileRepository studentRepo;
 private final IntegrityCaseRepository integrityCaseRepository;
 private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
-private final AppUserRepository userRepo;
+private final RepeatOffenderCalculator calculator;
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
 IntegrityCaseRepository integrityCaseRepository,
 RepeatOffenderRecordRepository repeatOffenderRecordRepository,
-AppUserRepository userRepo
+RepeatOffenderCalculator calculator
 ) {
 this.studentRepo = studentRepo;
 this.integrityCaseRepository = integrityCaseRepository;
 this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
-this.userRepo = userRepo;
+this.calculator = calculator;
 }
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
-
-if (studentRepo.existsByStudentId(student.getStudentId())) {
-throw new IllegalArgumentException("Student ID already exists");
-}
-
-if (studentRepo.existsByEmail(student.getEmail())) {
-throw new IllegalArgumentException("Email already exists");
-}
-
-AppUser user = userRepo.findById(1L)
-.orElseThrow(() ->
-new ResourceNotFoundException("User not found")
-);
-
-student.setUser(user);
 student.setRepeatOffender(false);
-
 return studentRepo.save(student);
 }
 
@@ -77,7 +63,12 @@ studentRepo.findById(studentId)
 new ResourceNotFoundException("Student not found")
 );
 
-student.setRepeatOffender(true);
+boolean repeat =
+calculator.isRepeatOffender(
+integrityCaseRepository.findByStudentProfile(student)
+);
+
+student.setRepeatOffender(repeat);
 return studentRepo.save(student);
 }
 }
