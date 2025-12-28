@@ -10,6 +10,4 @@ StudentProfile createStudent(StudentProfile student);
 StudentProfile getStudentById(Long id);
 
 List<StudentProfile> getAllStudents();
-
-StudentProfile updateRepeatOffenderStatus(Long studentId);
 }
