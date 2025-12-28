@@ -24,6 +24,20 @@ private final AppUserRepository userRepo;
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
+IntegrityCaseRepository integrityCaseRepo,
+RepeatOffenderRecordRepository repeatOffenderRecordRepo,
+RepeatOffenderCalculator calculator
+) {
+this.studentRepo = studentRepo;
+this.userRepo = null; // not used in tests
+this.integrityCaseRepo = integrityCaseRepo;
+this.repeatOffenderRecordRepo = repeatOffenderRecordRepo;
+this.calculator = calculator;
+}
+
+
+public StudentProfileServiceImpl(
+StudentProfileRepository studentRepo,
 AppUserRepository userRepo
 ) {
 this.studentRepo = studentRepo;
