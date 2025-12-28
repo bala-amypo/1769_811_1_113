@@ -1,14 +1,12 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "app_users")
-@Data
 public class AppUser {
 
     @Id
@@ -21,21 +19,15 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
-    // --- FIX: Map 'name' to the 'full_name' column required by your DB ---
     @Column(name = "full_name", nullable = false)
-    private String name; 
+    private String name;
 
-    // Remove any 'private String fullName;' field if it existed!
+    // --- ADDED: Enabled field initialized to true ---
+    @Column(nullable = false)
+    private boolean enabled = true; 
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -44,4 +36,71 @@ public class AppUser {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    // --- GETTERS AND SETTERS ---
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // --- ADDED: Getter and Setter for Enabled ---
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    // ---------------------------------------------
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 }
