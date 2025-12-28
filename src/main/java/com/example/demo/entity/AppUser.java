@@ -42,6 +42,7 @@ private Set<Role> roles = new HashSet<>();
 @JsonIgnore
 private Set<StudentProfile> studentProfiles = new HashSet<>();
 
+
 public AppUser() {}
 
 @PrePersist
