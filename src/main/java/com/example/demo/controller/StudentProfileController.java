@@ -31,4 +31,10 @@ return service.getStudentById(id);
 public List<StudentProfile> getAll() {
 return service.getAllStudents();
 }
+
+@PutMapping("/{id}/repeat-offender")
+public StudentProfile updateRepeatOffender(@PathVariable Long id) {
+return service.updateRepeatOffenderStatus(id);
+}
+
 }
