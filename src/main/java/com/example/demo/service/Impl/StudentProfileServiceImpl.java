@@ -38,6 +38,25 @@ this.calculator = calculator;
 }
 
 @Override
+public StudentProfile createStudent(StudentProfile student) {
+student.setRepeatOffender(false);
+return studentRepo.save(student);
+}
+
+@Override
+public StudentProfile getStudentById(Long id) {
+return studentRepo.findById(id)
+.orElseThrow(() ->
+new ResourceNotFoundException("Student not found")
+);
+}
+
+@Override
+public List<StudentProfile> getAllStudents() {
+return studentRepo.findAll();
+}
+
+@Override
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
 StudentProfile student =
@@ -49,14 +68,11 @@ new ResourceNotFoundException("Student not found")
 List<IntegrityCase> cases =
 integrityCaseRepo.findByStudentProfile(student);
 
-/* Use calculator */
 RepeatOffenderRecord record =
 calculator.computeRepeatOffenderRecord(student, cases);
 
-/* Update student flag */
 student.setRepeatOffender(cases.size() >= 2);
 
-/* Save both */
 studentRepo.save(student);
 repeatRecordRepo.save(record);
 
