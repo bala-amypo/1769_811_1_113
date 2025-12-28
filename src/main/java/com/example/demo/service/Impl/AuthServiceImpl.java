@@ -60,7 +60,12 @@ public JwtResponse login(LoginRequest request) {
             user.getEmail()
     );
 
-    return new JwtResponse(token);
+    return new JwtResponse(
+            token,
+            user.getId(),
+            user.getEmail(),
+            role
+    );
 }
 
 
