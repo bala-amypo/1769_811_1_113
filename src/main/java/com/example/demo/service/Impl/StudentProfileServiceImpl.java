@@ -62,4 +62,12 @@ new ResourceNotFoundException("Student not found")
 public List<StudentProfile> getAllStudents() {
 return studentRepo.findAll();
 }
+
+@Override
+public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+StudentProfile student = getStudentById(studentId);
+student.setRepeatOffender(true);
+return studentRepo.save(student);
+}
+
 }
