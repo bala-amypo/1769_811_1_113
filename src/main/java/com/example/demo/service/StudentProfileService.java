@@ -10,4 +10,7 @@ StudentProfile createStudent(StudentProfile student);
 StudentProfile getStudentById(Long id);
 
 List<StudentProfile> getAllStudents();
+
+/* 🔴 EXACT NAME TEST USES */
+StudentProfile updateRepeatOffenderStatus(Long studentId);
 }
