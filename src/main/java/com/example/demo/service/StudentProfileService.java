@@ -11,5 +11,5 @@ StudentProfile getStudentById(Long id);
 
 List<StudentProfile> getAllStudents();
 
-void deleteStudent(Long id);
+StudentProfile updateRepeatOffenderStatus(Long studentId);
 }
