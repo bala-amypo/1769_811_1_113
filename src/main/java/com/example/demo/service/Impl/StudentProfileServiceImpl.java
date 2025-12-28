@@ -12,34 +12,15 @@ import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 
-import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository;
-import com.example.demo.util.RepeatOffenderCalculator;
 
 
 @Service
 @Transactional
 public class StudentProfileServiceImpl
 implements StudentProfileService {
-public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-IntegrityCaseRepository integrityCaseRepo,
-RepeatOffenderRecordRepository repeatOffenderRecordRepo,
+
+private final StudentProfileRepository studentRepo;
 private final AppUserRepository userRepo;
-RepeatOffenderCalculator calculator
-) {
-this.studentRepo = studentRepo;
-this.userRepo = null; // not used in tests
-this.integrityCaseRepo = integrityCaseRepo;
-this.repeatOffenderRecordRepo = repeatOffenderRecordRepo;
-this.calculator = calculator;
-}
-
-
-
-
-
-
 
 public StudentProfileServiceImpl(
 StudentProfileRepository studentRepo,
