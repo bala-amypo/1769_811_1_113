@@ -9,58 +9,107 @@ import java.util.Set;
 @Table(name = "app_users")
 public class AppUser {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Column(unique = true, nullable = false)
-private String email;
+    @Column(unique = true, nullable = false)
+    private String email;
 
-@Column(nullable = false)
-private String password;
+    @Column(nullable = false)
+    private String password;
 
-/* ✅ KEEP ONLY THIS */
-@Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = false)
+    private String name;
+
+    // --- ADDED: Enabled field initialized to true ---
+    @Column(nullable = false)
+    private boolean enabled = true; 
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    // --- GETTERS AND SETTERS ---
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 private String fullName;
 
-@Column(nullable = false)
-private boolean enabled = true;
+    public String getEmail() {
+        return email;
+    }
 
-@Column(name = "created_at", updatable = false)
-private LocalDateTime createdAt;
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-@ManyToMany(fetch = FetchType.EAGER)
-@JoinTable(
-name = "user_roles",
-joinColumns = @JoinColumn(name = "user_id"),
-inverseJoinColumns = @JoinColumn(name = "role_id")
-)
-private Set<Role> roles = new HashSet<>();
+    public String getPassword() {
+        return password;
+    }
 
-@PrePersist
-protected void onCreate() {
-this.createdAt = LocalDateTime.now();
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getFullName() {
+return fullName;
 }
 
-/* GETTERS & SETTERS */
+public void setFullName(String fullName) {
+this.fullName = fullName;
+}
 
-public Long getId() { return id; }
-public void setId(Long id) { this.id = id; }
+    // --- ADDED: Getter and Setter for Enabled ---
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-public String getEmail() { return email; }
-public void setEmail(String email) { this.email = email; }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    // ---------------------------------------------
 
-public String getPassword() { return password; }
-public void setPassword(String password) { this.password = password; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-public String getFullName() { return fullName; }
-public void setFullName(String fullName) { this.fullName = fullName; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-public boolean isEnabled() { return enabled; }
-public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
-public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
-public Set<Role> getRoles() { return roles; }
-public void setRoles(Set<Role> roles) { this.roles = roles; }
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 }
