@@ -1,44 +1,63 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.security.core.Authentication;
+
+import java.security.Key;
 import java.util.Date;
 
 public class JwtTokenProvider {
 
-private final String secret;
-private final long expiration;
+private final Key key;
+private final long validityInMs;
 
-public JwtTokenProvider(String secret, long expiration) {
-this.secret = secret;
-this.expiration = expiration;
+public JwtTokenProvider(String secret, long validityInMs) {
+this.key = Keys.hmacShaKeyFor(secret.getBytes());
+this.validityInMs = validityInMs;
 }
 
-public String generateToken(Authentication auth, Long userId, String email, String role) {
+public String generateToken(
+Authentication authentication,
+Long userId,
+String email,
+String role
+) {
+
+Date now = new Date();
+Date expiry = new Date(now.getTime() + validityInMs);
+
 return Jwts.builder()
 .setSubject(email)
 .claim("userId", userId)
 .claim("role", role)
-.setIssuedAt(new Date())
-.setExpiration(new Date(System.currentTimeMillis() + expiration))
-.signWith(SignatureAlgorithm.HS256, secret)
+.setIssuedAt(now)
+.setExpiration(expiry)
+.signWith(key, SignatureAlgorithm.HS256)
 .compact();
+}
+
+public String getUsernameFromToken(String token) {
+return getClaims(token).getSubject();
 }
 
 public boolean validateToken(String token) {
 try {
-Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+getClaims(token);
 return true;
 } catch (Exception e) {
 return false;
 }
 }
 
-public String getUsernameFromToken(String token) {
-return Jwts.parser()
-.setSigningKey(secret)
+private Claims getClaims(String token) {
+return Jwts.parserBuilder()
+.setSigningKey(key)
+.build()
 .parseClaimsJws(token)
-.getBody()
-.getSubject();
+.getBody();
 }
 }
