@@ -2,31 +2,36 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
-    // ✅ MUST be hardcoded for tests
-    private static final String SECRET =
-            "my-test-secret-key-my-test-secret-key-123456"; // 256+ bits
+    private static final String DEFAULT_SECRET =
+            "my-test-secret-key-my-test-secret-key-123456"; // >= 256 bits
 
-    private static final long EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
+    private SecretKey key;
+    private long expirationMs;
 
-    private final SecretKey key;
-
-    // ✅ NO-ARG CONSTRUCTOR (TESTS REQUIRE THIS)
-    public JwtTokenProvider() {
-        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    /* ✅ REQUIRED BY TESTS */
+    public JwtTokenProvider(String secret, long expirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expirationMs = expirationMs;
     }
 
-    // ✅ METHOD SIGNATURE EXPECTED BY TESTS
+    /* ✅ REQUIRED BY SPRING */
+    public JwtTokenProvider() {
+        this.key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes());
+        this.expirationMs = 60 * 60 * 1000; // 1 hour
+    }
+
+    /* ✅ REQUIRED METHOD SIGNATURE (TESTS EXPECT THIS EXACTLY) */
     public String generateToken(
-            org.springframework.security.core.Authentication authentication,
+            Authentication authentication,
             Long userId,
             String email,
             String role
@@ -36,17 +41,17 @@ public class JwtTokenProvider {
                 .claim("userId", userId)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ REQUIRED BY TESTS
+    /* ✅ REQUIRED BY TESTS */
     public String getUsernameFromToken(String token) {
         return parseClaims(token).getSubject();
     }
 
-    // ✅ REQUIRED BY TESTS
+    /* ✅ REQUIRED BY TESTS */
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
