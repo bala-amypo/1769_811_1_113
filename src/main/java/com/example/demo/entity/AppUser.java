@@ -24,7 +24,7 @@ private String fullName;
 
 @Column(name = "created_at", nullable = false, updatable = false)
 private LocalDateTime createdAt;
-
+private String name;
 @Column(nullable = false)
 private boolean enabled;
 
@@ -46,6 +46,8 @@ this.enabled = true;
 
 /* ===================== GETTERS ===================== */
 
+public String getName() { return name; }
+ public void setName(String name) { this.name = name; }
 public Long getId() {
 return id;
 }
