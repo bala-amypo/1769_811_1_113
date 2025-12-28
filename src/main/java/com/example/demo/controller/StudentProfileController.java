@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.service.StudentProfileService;
 
@@ -27,8 +26,7 @@ return studentProfileService.createStudent(studentProfile);
 public StudentProfile getById(@PathVariable Long id) {
 return studentProfileService.getStudentById(id);
 }
-
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN)")
 @GetMapping
 public List<StudentProfile> getAll() {
 return studentProfileService.getAllStudents();
