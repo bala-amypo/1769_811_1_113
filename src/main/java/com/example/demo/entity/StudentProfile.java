@@ -41,11 +41,11 @@ private LocalDateTime createdAt;
 
 @ManyToOne
 @JoinColumn(name = "user_id", nullable = false)
-
+@JsonIgnore
 private AppUser user;
 
 @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL)
-
+@JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {

@@ -82,9 +82,7 @@ throw new IllegalArgumentException("Email already exists");
 }
 
 
-if (userRepo != null) {
-userRepo.findById(1L).ifPresent(student::setUser);
-}
+
 
 student.setRepeatOffender(false); // REQUIRED BY TEST
 return studentRepo.save(student);
