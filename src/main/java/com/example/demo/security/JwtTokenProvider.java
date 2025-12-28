@@ -1,7 +1,10 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -11,16 +14,14 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-private final SecretKey key =
-Keys.hmacShaKeyFor(
-"THIS_IS_A_256_BIT_SECRET_KEY_FOR_TESTS_1234".getBytes()
-);
+/* 🔴 MUST be >= 256 bits */
+private static final SecretKey KEY =
+Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-private final long validityMs = 3600000;
+private static final long EXPIRATION =
+1000 * 60 * 60; // 1 hour
 
-public JwtTokenProvider() {}
-
-/* REQUIRED BY TESTS */
+/* 🔴 REQUIRED by tests */
 public String generateToken(
 Authentication authentication,
 Long userId,
@@ -28,33 +29,39 @@ String email,
 String role
 ) {
 
+Date now = new Date();
+Date expiry = new Date(now.getTime() + EXPIRATION);
+
 return Jwts.builder()
 .setSubject(email)
 .claim("userId", userId)
 .claim("role", role)
-.setIssuedAt(new Date())
-.setExpiration(new Date(System.currentTimeMillis() + validityMs))
-.signWith(key, SignatureAlgorithm.HS256)
+.setIssuedAt(now)
+.setExpiration(expiry)
+.signWith(KEY)
 .compact();
 }
 
-/* REQUIRED BY TESTS */
+/* 🔴 REQUIRED by tests */
+public String getUsernameFromToken(String token) {
+return getClaims(token).getSubject();
+}
+
+/* 🔴 REQUIRED by tests */
 public boolean validateToken(String token) {
 try {
-Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+getClaims(token);
 return true;
 } catch (Exception e) {
 return false;
 }
 }
 
-/* REQUIRED BY TESTS */
-public String getUsernameFromToken(String token) {
+private Claims getClaims(String token) {
 return Jwts.parserBuilder()
-.setSigningKey(key)
+.setSigningKey(KEY)
 .build()
 .parseClaimsJws(token)
-.getBody()
-.getSubject();
+.getBody();
 }
 }

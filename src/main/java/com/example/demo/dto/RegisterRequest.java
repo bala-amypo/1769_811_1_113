@@ -18,4 +18,15 @@ public void setName(String name) { this.name = name; }
 
 public String getRole() { return role; }
 public void setRole(String role) { this.role = role; }
+public class RegisterRequest {
+
+
+private String fullName;
+
+
+
+public String getFullName() { return fullName; }
+public void setFullName(String fullName) { this.fullName = fullName; }
+}
+
 }
