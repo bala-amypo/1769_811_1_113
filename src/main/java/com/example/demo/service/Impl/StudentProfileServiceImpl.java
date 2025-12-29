@@ -72,9 +72,6 @@ integrityCaseRepository.findByStudentProfile(student);
 RepeatOffenderRecord record =
 calculator.computeRepeatOffenderRecord(student, cases);
 
-record.setStudentProfile(student);   // ✅ REQUIRED
-
-
 student.setRepeatOffender(record.getTotalCases() >= 2);
 
 repeatOffenderRecordRepository
