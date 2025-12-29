@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.StudentProfile;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.AppUserRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
@@ -20,68 +22,79 @@ import com.example.demo.util.RepeatOffenderCalculator;
 @Transactional
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-private final StudentProfileRepository studentProfileRepository;
-private final IntegrityCaseRepository integrityCaseRepository;
-private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
+private final StudentProfileRepository studentRepo;
+private final IntegrityCaseRepository caseRepo;
+private final RepeatOffenderRecordRepository repeatRepo;
+private final AppUserRepository userRepo;
 private final RepeatOffenderCalculator calculator;
 
 public StudentProfileServiceImpl(
-StudentProfileRepository studentProfileRepository,
-IntegrityCaseRepository integrityCaseRepository,
-RepeatOffenderRecordRepository repeatOffenderRecordRepository,
+StudentProfileRepository studentRepo,
+IntegrityCaseRepository caseRepo,
+RepeatOffenderRecordRepository repeatRepo,
+AppUserRepository userRepo,
 RepeatOffenderCalculator calculator
 ) {
-this.studentProfileRepository = studentProfileRepository;
-this.integrityCaseRepository = integrityCaseRepository;
-this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
+this.studentRepo = studentRepo;
+this.caseRepo = caseRepo;
+this.repeatRepo = repeatRepo;
+this.userRepo = userRepo;
 this.calculator = calculator;
 }
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
 
+if(student.getUser() == null || student.getUser().getId() == null)
+throw new RuntimeException("User ID is required");
+
+AppUser user = userRepo.findById(student.getUser().getId())
+.orElseThrow(() -> new RuntimeException("User not found"));
+
+student.setUser(user);
 student.setRepeatOffender(false);
 
-
-AppUser user = new AppUser();
-user.setId(1L);  
-student.setUser(user);
-
-return studentProfileRepository.save(student);
+return studentRepo.save(student);
 }
 
 @Override
 public StudentProfile getStudentById(Long id) {
-return studentProfileRepository.findById(id)
+return studentRepo.findById(id)
 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 }
 
 @Override
 public List<StudentProfile> getAllStudents() {
-return studentProfileRepository.findAll();
+return studentRepo.findAll();
 }
 
 @Override
-@Transactional
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
-StudentProfile student = studentRepo.findById(studentId)
-.orElseThrow(() -> new RuntimeException("Student not found"));
+StudentProfile student = getStudentById(studentId);
 
-int totalCases = caseRepo.countByStudentProfile(student);
+List<IntegrityCase> cases =
+caseRepo.findByStudentProfile(student);
 
-RepeatOffenderRecord record = new RepeatOffenderRecord();
-record.setStudentProfile(student);   // ✅ THIS WAS MISSING
-record.setStudentId(student.getStudentId());
+int totalCases = cases.size();
+
+RepeatOffenderRecord record =
+repeatRepo.findByStudentProfile(student)
+.orElseGet(() -> {
+RepeatOffenderRecord r = new RepeatOffenderRecord();
+r.setStudentProfile(student);   // ✅ CRITICAL
+r.setStudentId(student.getStudentId());
+return r;
+});
+
 record.setTotalCases(totalCases);
 record.setLastIncidentDate(LocalDate.now());
 record.setFlagSeverity(calculator.calculateSeverity(totalCases));
 
-repeatOffenderRecordRepo.save(record);  // ✅ now FK is inserted
+repeatRepo.save(record);
 
-student.setRepeatOffender(totalCases >= 3);
+student.setRepeatOffender(totalCases >= 2);
 
 return studentRepo.save(student);
 }
-
 }
