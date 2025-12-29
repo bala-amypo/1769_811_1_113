@@ -72,6 +72,9 @@ integrityCaseRepository.findByStudentProfile(student);
 RepeatOffenderRecord record =
 calculator.computeRepeatOffenderRecord(student, cases);
 
+/* 🔥 THIS LINE FIXES THE ERROR 🔥 */
+record.setStudentProfile(student);
+
 student.setRepeatOffender(record.getTotalCases() >= 2);
 
 repeatOffenderRecordRepository
@@ -80,6 +83,7 @@ repeatOffenderRecordRepository
 r -> {
 r.setTotalCases(record.getTotalCases());
 r.setFlagSeverity(record.getFlagSeverity());
+r.setLastIncidentDate(record.getLastIncidentDate());
 repeatOffenderRecordRepository.save(r);
 },
 () -> repeatOffenderRecordRepository.save(record)
@@ -87,4 +91,5 @@ repeatOffenderRecordRepository.save(r);
 
 return studentProfileRepository.save(student);
 }
+
 }
