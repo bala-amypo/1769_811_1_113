@@ -15,7 +15,7 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-/* 🔴 HIDE AppUser FROM JSON */
+
 @ManyToOne(optional = false)
 @JoinColumn(name = "user_id", nullable = false)
 @JsonIgnore
@@ -41,7 +41,7 @@ private Boolean repeatOffender = false;
 @Column(nullable = false)
 private LocalDateTime createdAt = LocalDateTime.now();
 
-/* 🔴 HIDE IntegrityCases FROM JSON */
+
 @OneToMany(mappedBy = "studentProfile")
 @JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
