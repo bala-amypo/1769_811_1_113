@@ -10,42 +10,37 @@ import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
-import com.example.demo.entity.AppUser;
-
-import com.example.demo.repository.AppUserRepository;
-
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Transactional
-public class StudentProfileServiceImpl implements StudentProfileService {
+public class StudentProfileServiceImpl
+implements StudentProfileService {
 
-private final StudentProfileRepository studentRepo;
-private final AppUserRepository userRepo;
+private final StudentProfileRepository studentProfileRepository;
+private final IntegrityCaseRepository integrityCaseRepository;
+private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
+private final RepeatOffenderCalculator calculator;
 
+/* 🔴 REQUIRED constructor (exact order) */
 public StudentProfileServiceImpl(
-StudentProfileRepository studentRepo,
-AppUserRepository userRepo
+StudentProfileRepository studentProfileRepository,
+IntegrityCaseRepository integrityCaseRepository,
+RepeatOffenderRecordRepository repeatOffenderRecordRepository,
+RepeatOffenderCalculator calculator
 ) {
-this.studentRepo = studentRepo;
-this.userRepo = userRepo;
+this.studentProfileRepository = studentProfileRepository;
+this.integrityCaseRepository = integrityCaseRepository;
+this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
+this.calculator = calculator;
 }
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
-
-AppUser user = userRepo.findById(1L)
-.orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-student.setUser(user);
-
-return studentRepo.save(student);
+student.setRepeatOffender(false);
+return studentProfileRepository.save(student);
 }
-
-
 
 @Override
 public StudentProfile getStudentById(Long id) {
