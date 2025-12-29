@@ -38,9 +38,14 @@ this.calculator = calculator;
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
-student.setRepeatOffender(false);
-return studentProfileRepository.save(student);
+
+AppUser currentUser = authService.getCurrentUser(); // or from SecurityContext
+
+student.setUser(currentUser);
+
+return studentRepo.save(student);
 }
+
 
 @Override
 public StudentProfile getStudentById(Long id) {
