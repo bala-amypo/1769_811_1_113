@@ -1,8 +1,7 @@
 package com.example.demo.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "repeat_offender_records")
@@ -12,41 +11,31 @@ public class RepeatOffenderRecord {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@ManyToOne(fetch = FetchType.LAZY, optional = false)
-@JoinColumn(name = "student_profile_id", nullable = false)
+@ManyToOne(optional = false)
+@JoinColumn(name = "student_id")
 private StudentProfile studentProfile;
 
-/* ❗ KEEP studentId ONLY IF YOU REALLY NEED IT */
-@Column(name = "student_id", nullable = false)
-private Long studentId;
-
 @Column(nullable = false)
-private int totalCases;
+private Integer totalCases;
+
+private LocalDate lastIncidentDate;
 
 @Column(nullable = false)
 private String flagSeverity;
 
-private LocalDate lastIncidentDate;
+public RepeatOffenderRecord() {}
 
-/* getters + setters */
+public Long getId() { return id; }
 
-public void setStudentProfile(StudentProfile studentProfile) {
-this.studentProfile = studentProfile;
-}
+public StudentProfile getStudentProfile() { return studentProfile; }
+public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
 
-public void setStudentId(Long studentId) {
-this.studentId = studentId;
-}
+public Integer getTotalCases() { return totalCases; }
+public void setTotalCases(Integer totalCases) { this.totalCases = totalCases; }
 
-public void setTotalCases(int totalCases) {
-this.totalCases = totalCases;
-}
+public LocalDate getLastIncidentDate() { return lastIncidentDate; }
+public void setLastIncidentDate(LocalDate lastIncidentDate) { this.lastIncidentDate = lastIncidentDate; }
 
-public void setFlagSeverity(String flagSeverity) {
-this.flagSeverity = flagSeverity;
-}
-
-public void setLastIncidentDate(LocalDate lastIncidentDate) {
-this.lastIncidentDate = lastIncidentDate;
-}
+public String getFlagSeverity() { return flagSeverity; }
+public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
 }
