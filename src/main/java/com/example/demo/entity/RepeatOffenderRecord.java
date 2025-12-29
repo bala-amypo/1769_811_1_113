@@ -19,6 +19,8 @@ private StudentProfile studentProfile;
 private Integer totalCases;
 
 private LocalDate lastIncidentDate;
+@Column(name = "student_id", nullable = false)
+private Long studentId;
 
 @Column(nullable = false)
 private String flagSeverity;
@@ -38,4 +40,9 @@ public void setLastIncidentDate(LocalDate lastIncidentDate) { this.lastIncidentD
 
 public String getFlagSeverity() { return flagSeverity; }
 public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
+
+public void setStudentId(Long studentId) {
+this.studentId = studentId;
+}
+
 }
