@@ -1,5 +1,11 @@
 package com.example.demo.service.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.entity.AppUser;
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.StudentProfile;
@@ -10,20 +16,15 @@ import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
 import com.example.demo.util.RepeatOffenderCalculator;
 
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 @Service
-public class StudentProfileServiceImpl
-implements StudentProfileService {
+@Transactional
+public class StudentProfileServiceImpl implements StudentProfileService {
 
 private final StudentProfileRepository studentProfileRepository;
 private final IntegrityCaseRepository integrityCaseRepository;
 private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
 private final RepeatOffenderCalculator calculator;
 
-/* 🔴 REQUIRED constructor (exact order) */
 public StudentProfileServiceImpl(
 StudentProfileRepository studentProfileRepository,
 IntegrityCaseRepository integrityCaseRepository,
@@ -38,14 +39,19 @@ this.calculator = calculator;
 
 @Override
 public StudentProfile createStudent(StudentProfile student) {
+
 student.setRepeatOffender(false);
+
+/* 🔴 CRITICAL FIX: user_id must NOT be NULL */
+student.setUser(new AppUser(1L)); // make sure user with ID=1 exists
+
 return studentProfileRepository.save(student);
 }
 
 @Override
 public StudentProfile getStudentById(Long id) {
 return studentProfileRepository.findById(id)
-.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+.orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 }
 
 @Override
@@ -55,6 +61,7 @@ return studentProfileRepository.findAll();
 
 @Override
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+
 StudentProfile student = getStudentById(studentId);
 
 List<IntegrityCase> cases =
