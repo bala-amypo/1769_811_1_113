@@ -24,6 +24,6 @@ public class Role {
 
     public String getName() { return name; }
     
-    // ✅ The error proves this is currently missing in your file
+   
     public void setName(String name) { this.name = name; }
 }
