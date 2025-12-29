@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "student_profiles")
 public class StudentProfile {
@@ -13,8 +15,10 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
+/* 🔴 HIDE AppUser FROM JSON */
 @ManyToOne(optional = false)
 @JoinColumn(name = "user_id", nullable = false)
+@JsonIgnore
 private AppUser user;
 
 @Column(nullable = false, unique = true)
@@ -37,7 +41,9 @@ private Boolean repeatOffender = false;
 @Column(nullable = false)
 private LocalDateTime createdAt = LocalDateTime.now();
 
+/* 🔴 HIDE IntegrityCases FROM JSON */
 @OneToMany(mappedBy = "studentProfile")
+@JsonIgnore
 private List<IntegrityCase> integrityCases = new ArrayList<>();
 
 public StudentProfile() {}
@@ -68,13 +74,10 @@ public Boolean getRepeatOffender() { return repeatOffender; }
 public void setRepeatOffender(Boolean repeatOffender) { this.repeatOffender = repeatOffender; }
 
 public LocalDateTime getCreatedAt() { return createdAt; }
-public AppUser getUser() {
-return user;
-}
 
-public void setUser(AppUser user) {
-this.user = user;
-}
+/* getters/setters kept for JPA usage */
+public AppUser getUser() { return user; }
+public void setUser(AppUser user) { this.user = user; }
 
 public List<IntegrityCase> getIntegrityCases() { return integrityCases; }
 }
