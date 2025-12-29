@@ -38,17 +38,22 @@ this.calculator = calculator;
 }
 
 @Override
+@Transactional
 public StudentProfile createStudent(StudentProfile student) {
 
-student.setRepeatOffender(false);
+if(student.getUser() == null || student.getUser().getId() == null)
+throw new RuntimeException("User ID is required");
 
-/* 🔴 CRITICAL FIX: SET user_id BEFORE SAVE */
-AppUser user = new AppUser();
-user.setId(1L);   // make sure user with ID = 1 exists in DB
+Long userId = student.getUser().getId();
+
+AppUser user = appUserRepository.findById(userId)
+.orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
 student.setUser(user);
 
-return studentProfileRepository.save(student);
+return studentRepo.save(student);
 }
+
 
 @Override
 public StudentProfile getStudentById(Long id) {
