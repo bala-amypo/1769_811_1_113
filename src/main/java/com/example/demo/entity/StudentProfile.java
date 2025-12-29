@@ -18,7 +18,7 @@ private Long id;
 
 @ManyToOne(optional = false)
 @JoinColumn(name = "user_id", nullable = false)
-@JsonIgnore
+
 private AppUser user;
 
 @Column(nullable = false, unique = true)
@@ -43,8 +43,9 @@ private LocalDateTime createdAt = LocalDateTime.now();
 
 
 @OneToMany(mappedBy = "studentProfile")
-@JsonIgnore
-private List<IntegrityCase> integrityCases = new ArrayList<>();
+@JsonIgnore   // 🔥 IMPORTANT
+private List<IntegrityCase> integrityCases;
+
 
 public StudentProfile() {}
 
