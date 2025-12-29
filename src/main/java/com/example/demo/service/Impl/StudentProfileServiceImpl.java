@@ -62,29 +62,26 @@ return studentProfileRepository.findAll();
 }
 
 @Override
+@Transactional
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
-StudentProfile student = getStudentById(studentId);
+StudentProfile student = studentRepo.findById(studentId)
+.orElseThrow(() -> new RuntimeException("Student not found"));
 
-List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentProfile(student);
+int totalCases = caseRepo.countByStudentProfile(student);
 
-RepeatOffenderRecord record =
-calculator.computeRepeatOffenderRecord(student, cases);
+RepeatOffenderRecord record = new RepeatOffenderRecord();
+record.setStudentProfile(student);   // ✅ THIS WAS MISSING
+record.setStudentId(student.getStudentId());
+record.setTotalCases(totalCases);
+record.setLastIncidentDate(LocalDate.now());
+record.setFlagSeverity(calculator.calculateSeverity(totalCases));
 
-student.setRepeatOffender(record.getTotalCases() >= 2);
+repeatOffenderRecordRepo.save(record);  // ✅ now FK is inserted
 
-repeatOffenderRecordRepository
-.findByStudentProfile(student)
-.ifPresentOrElse(
-r -> {
-r.setTotalCases(record.getTotalCases());
-r.setFlagSeverity(record.getFlagSeverity());
-repeatOffenderRecordRepository.save(r);
-},
-() -> repeatOffenderRecordRepository.save(record)
-);
+student.setRepeatOffender(totalCases >= 3);
 
-return studentProfileRepository.save(student);
+return studentRepo.save(student);
 }
+
 }
