@@ -13,6 +13,10 @@ public class StudentProfile {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
+@ManyToOne(optional = false)
+@JoinColumn(name = "user_id", nullable = false)
+private AppUser user;
+
 @Column(nullable = false, unique = true)
 private String studentId;
 
@@ -64,6 +68,13 @@ public Boolean getRepeatOffender() { return repeatOffender; }
 public void setRepeatOffender(Boolean repeatOffender) { this.repeatOffender = repeatOffender; }
 
 public LocalDateTime getCreatedAt() { return createdAt; }
+public AppUser getUser() {
+return user;
+}
+
+public void setUser(AppUser user) {
+this.user = user;
+}
 
 public List<IntegrityCase> getIntegrityCases() { return integrityCases; }
 }
