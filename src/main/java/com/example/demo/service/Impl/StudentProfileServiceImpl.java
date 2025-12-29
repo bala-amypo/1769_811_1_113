@@ -42,8 +42,10 @@ public StudentProfile createStudent(StudentProfile student) {
 
 student.setRepeatOffender(false);
 
-/* 🔴 CRITICAL FIX: user_id must NOT be NULL */
-student.setUser(new AppUser(1L)); // make sure user with ID=1 exists
+/* 🔴 CRITICAL FIX: SET user_id BEFORE SAVE */
+AppUser user = new AppUser();
+user.setId(1L);   // make sure user with ID = 1 exists in DB
+student.setUser(user);
 
 return studentProfileRepository.save(student);
 }
