@@ -62,32 +62,28 @@ return studentProfileRepository.findAll();
 }
 
 @Override
+@Transactional
 public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
 StudentProfile student = getStudentById(studentId);
 
-List<IntegrityCase> cases =
-integrityCaseRepository.findByStudentProfile(student);
+int totalCases =
+integrityCaseRepository.countByStudentProfile(student);
 
 RepeatOffenderRecord record =
-calculator.computeRepeatOffenderRecord(student, cases);
-
-/* 🔥 THIS LINE FIXES THE ERROR 🔥 */
-record.setStudentProfile(student);
-
-student.setRepeatOffender(record.getTotalCases() >= 2);
-
 repeatOffenderRecordRepository
 .findByStudentProfile(student)
-.ifPresentOrElse(
-r -> {
-r.setTotalCases(record.getTotalCases());
-r.setFlagSeverity(record.getFlagSeverity());
-r.setLastIncidentDate(record.getLastIncidentDate());
-repeatOffenderRecordRepository.save(r);
-},
-() -> repeatOffenderRecordRepository.save(record)
-);
+.orElse(new RepeatOffenderRecord());
+
+record.setStudentProfile(student); // 🔥 REQUIRED
+record.setStudentId(student.getId()); // matches DB column
+record.setTotalCases(totalCases);
+record.setFlagSeverity(calculator.calculateSeverity(totalCases));
+record.setLastIncidentDate(LocalDate.now());
+
+repeatOffenderRecordRepository.save(record);
+
+student.setRepeatOffender(totalCases >= 2);
 
 return studentProfileRepository.save(student);
 }

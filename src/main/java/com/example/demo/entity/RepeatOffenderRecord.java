@@ -1,7 +1,8 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "repeat_offender_records")
@@ -11,31 +12,41 @@ public class RepeatOffenderRecord {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 
-@ManyToOne(optional = false)
-@JoinColumn(name = "student_id")
+@ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "student_profile_id", nullable = false)
 private StudentProfile studentProfile;
 
-@Column(nullable = false)
-private Integer totalCases;
+/* ❗ KEEP studentId ONLY IF YOU REALLY NEED IT */
+@Column(name = "student_id", nullable = false)
+private Long studentId;
 
-private LocalDate lastIncidentDate;
+@Column(nullable = false)
+private int totalCases;
 
 @Column(nullable = false)
 private String flagSeverity;
 
-public RepeatOffenderRecord() {}
+private LocalDate lastIncidentDate;
 
-public Long getId() { return id; }
+/* getters + setters */
 
-public StudentProfile getStudentProfile() { return studentProfile; }
-public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
+public void setStudentProfile(StudentProfile studentProfile) {
+this.studentProfile = studentProfile;
+}
 
-public Integer getTotalCases() { return totalCases; }
-public void setTotalCases(Integer totalCases) { this.totalCases = totalCases; }
+public void setStudentId(Long studentId) {
+this.studentId = studentId;
+}
 
-public LocalDate getLastIncidentDate() { return lastIncidentDate; }
-public void setLastIncidentDate(LocalDate lastIncidentDate) { this.lastIncidentDate = lastIncidentDate; }
+public void setTotalCases(int totalCases) {
+this.totalCases = totalCases;
+}
 
-public String getFlagSeverity() { return flagSeverity; }
-public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
+public void setFlagSeverity(String flagSeverity) {
+this.flagSeverity = flagSeverity;
+}
+
+public void setLastIncidentDate(LocalDate lastIncidentDate) {
+this.lastIncidentDate = lastIncidentDate;
+}
 }
