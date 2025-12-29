@@ -17,19 +17,19 @@ public class JwtTokenProvider {
     private SecretKey key;
     private long expirationMs;
 
-    /* ✅ REQUIRED BY TESTS */
+    
     public JwtTokenProvider(String secret, long expirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }
 
-    /* ✅ REQUIRED BY SPRING */
+    
     public JwtTokenProvider() {
         this.key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes());
         this.expirationMs = 60 * 60 * 1000; // 1 hour
     }
 
-    /* ✅ REQUIRED METHOD SIGNATURE (TESTS EXPECT THIS EXACTLY) */
+   
     public String generateToken(
             Authentication authentication,
             Long userId,
@@ -46,12 +46,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    /* ✅ REQUIRED BY TESTS */
+    
     public String getUsernameFromToken(String token) {
         return parseClaims(token).getSubject();
     }
 
-    /* ✅ REQUIRED BY TESTS */
+   
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
